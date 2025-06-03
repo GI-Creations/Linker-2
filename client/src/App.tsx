@@ -18,8 +18,8 @@ const AppContent = () => {
 
   const handleGlobalNewChat = (query: string) => {
     // If not on chat page, navigate there
-    if (location.pathname !== '/') {
-      window.location.href = '/';
+    if (location.pathname !== '/chat') {
+      window.location.href = '/chat';
     }
 
     // Set the query in localStorage to be picked up by Dial component
@@ -29,8 +29,8 @@ const AppContent = () => {
   return (
     <>
       <Routes>
-
-        <Route path="/" element={<Dial />} />
+        
+        <Route path="/chat" element={<Dial />} />
         <Route path="/knowledge-bases" element={<KnowledgeBases />} />
         <Route path="/knowledge-base/:id" element={<KnowledgeBaseDetail />} />
         <Route path="/tools" element={<Tools />} />
@@ -38,7 +38,7 @@ const AppContent = () => {
       </Routes>
 
       {/* Global Floating New Chat - visible on all pages except chat */}
-      {location.pathname !== '/' && (
+      {location.pathname !== '/chat' && (
         <FloatingNewChat onNewChat={handleGlobalNewChat} />
       )}
     </>
