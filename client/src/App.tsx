@@ -34,7 +34,7 @@ const AppContent = () => {
         <Route path="/knowledge-bases" element={<KnowledgeBases />} />
         <Route path="/knowledge-base/:id" element={<KnowledgeBaseDetail />} />
         <Route path="/tools" element={<Tools />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<Dial />} />
       </Routes>
 
       {/* Global Floating New Chat - visible on all pages except chat */}
