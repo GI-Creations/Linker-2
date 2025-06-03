@@ -39,9 +39,9 @@ const AppContent = () => {
       </Routes>
 
       {/* Global Floating New Chat - visible on all pages except chat */}
-      {location.pathname !== '/chat' && (
+      {/* {location.pathname !== '/chat' && (
         <FloatingNewChat onNewChat={handleGlobalNewChat} />
-      )}
+      )} */}
     </>
   );
 };
