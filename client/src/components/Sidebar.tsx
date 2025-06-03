@@ -9,6 +9,8 @@ const Sidebar = () => {
   const navigationItems = [
     { icon: MessageCircle, label: 'Chat', path: '/chat' },
     { icon: Folder, label: 'Knowledge Bases', path: '/knowledge-bases' },
+    // { icon: Settings, label: 'Settings', path: '/settings' },
+    { icon: Wrench, label: 'Tools', path: '/tools' },
 
   ];
 
@@ -19,14 +21,14 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="w-full md:w-72 min-h-screen bg-gradient-to-b from-blue-125 to-blue-50 rounded-2xl shadow-xl p-4 flex flex-col gap-6" style={{ border: '1.5px solid #dbeafe' }}>
+    <aside className="w-full md:w-72 min-h-screen bg-[#1f232e]  rounded-2xl shadow-xl p-4 flex flex-col gap-6" style={{ border: '1.5px solid #dbeafe' }}>
       {/* Header */}
-      <div className="flex flex-col gap-3 px-2 pt-2 pb-4">
+      {/* <div className="flex flex-col gap-3 px-2 pt-2 pb-4">
         <button className="btn-primary">
           Linker
         </button>
 
-      </div>
+      </div> */}
 
       {/* Navigation */}
       <nav className="flex flex-col gap-2 px-2">
@@ -36,11 +38,11 @@ const Sidebar = () => {
           return (
             <div
               key={index}
-              className={`flex items-center gap-4 px-5 py-4 rounded-xl cursor-pointer transition-all duration-200 text-base font-medium shadow-sm ${isActive
-                ? 'btn-secondary'
-                : 'btn-tertiary'
+              className={`flex items-center gap-4 px-5 py-4 rounded-xl cursor-pointer transition-all duration-200 text-lg font-medium shadow-sm ${isActive
+                ? 'bg-[#1677FF] text-white'
+                : 'text-white hover:text-[#1677FF]'
                 }`}
-              style={{ marginBottom: '8px' }}
+
               onClick={() => handleNavigation(item)}
             >
               <Icon className="w-6 h-6" />
@@ -51,7 +53,7 @@ const Sidebar = () => {
       </nav>
 
       {/* Footer */}
-      <div className="mt-auto pt-6">
+      {/* <div className="mt-auto pt-6">
         <button className="btn-secondary shadow-md flex items-center gap-3 px-5 py-4 w-full">
           <div className="w-9 h-9 flex items-center justify-center">
             <span className="text-base font-bold">U</span>
@@ -61,7 +63,7 @@ const Sidebar = () => {
             <div className="text-xs text-blue-500">user@example.com</div>
           </div>
         </button>
-      </div>
+      </div> */}
     </aside>
   );
 };

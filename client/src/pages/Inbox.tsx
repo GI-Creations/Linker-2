@@ -96,14 +96,14 @@ function Dial() {
     setThreads(prev => prev.map(t =>
       t.id === currentThread.id
         ? {
-            ...t,
-            messages: [
-              ...t.messages,
-              { id: `msg-${Date.now()}`, text: input, timestamp: now, isUser: true }
-            ],
-            lastMessage: input,
-            time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          }
+          ...t,
+          messages: [
+            ...t.messages,
+            { id: `msg-${Date.now()}`, text: input, timestamp: now, isUser: true }
+          ],
+          lastMessage: input,
+          time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }
         : t
     ));
     setInput('');
@@ -114,14 +114,14 @@ function Dial() {
       setThreads(prev => prev.map(t =>
         t.id === currentThread.id
           ? {
-              ...t,
-              messages: [
-                ...t.messages,
-                { id: `msg-${Date.now()}`, text: aiResponse, timestamp: new Date(), isUser: false }
-              ],
-              lastMessage: aiResponse,
-              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            }
+            ...t,
+            messages: [
+              ...t.messages,
+              { id: `msg-${Date.now()}`, text: aiResponse, timestamp: new Date(), isUser: false }
+            ],
+            lastMessage: aiResponse,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }
           : t
       ));
       setLoading(false);
@@ -140,7 +140,7 @@ function Dial() {
           {isSidebarVisible ? (
             <aside className="w-80 bg-white/90 backdrop-blur-sm border-r border-gray-200/60 flex flex-col transition-all duration-300 ease-in-out">
               <header className="p-4 border-b border-gray-200/60">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between ">
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setIsSidebarVisible(false)}
@@ -151,29 +151,23 @@ function Dial() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                       </svg>
                     </button>
-                    <span className="text-lg font-semibold text-gray-900">Chat Threads</span>
+                    <IconBtn
+                      size="sm"
+                      onClick={handleStartThread}
+                      className="p-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl transition-all duration-200 hover:shadow-md"
+                    >
+                      <NewIcon className="w-5 h-2  " />
+                    </IconBtn>
+                    <span className="text-lg font-semibold text-gray-900">New Chat </span>
                   </div>
-                  <IconBtn 
-                    size="sm" 
-                    onClick={handleStartThread} 
-                    className="p-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl transition-all duration-200 hover:shadow-md"
-                  >
-                    <NewIcon className="w-4 h-4" />
-                  </IconBtn>
+
                 </div>
-                <div className="relative">
-                  <Magnifier className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <SearchBox
-                    placeholder="Search threads..."
-                    value={query}
-                    onChange={e => setQuery(e.target.value)}
-                    className="w-full bg-gray-50/80 border border-gray-200/80 hover:border-gray-300/80 focus:border-blue-400 text-gray-900 placeholder:text-gray-500 rounded-xl pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
-                  />
-                </div>
+
               </header>
               <ChatHistorySidebar
                 isVisible={isSidebarVisible}
                 onToggle={() => setIsSidebarVisible(false)}
+                activeThreadId={activeThreadId}
                 chatHistory={filteredThreads.map(thread => ({
                   id: thread.id,
                   title: thread.title,
@@ -232,7 +226,7 @@ function Dial() {
                   )}
                 </div>
                 <footer className="border-t border-gray-200/60 bg-white/80 backdrop-blur-sm">
-                  <ChatInput 
+                  <ChatInput
                     message={input}
                     onMessageChange={(e) => setInput(e.target.value)}
                     onSendMessage={handleSendMessage}
@@ -244,7 +238,7 @@ function Dial() {
                     }}
                     showMentions={false}
                     filteredMentions={[]}
-                    onMentionClick={() => {}}
+                    onMentionClick={() => { }}
                     isLoading={loading}
                   />
                 </footer>

@@ -11,6 +11,7 @@ interface ChatHistorySidebarProps {
   onToggle: () => void;
   onNewChat: () => void;
   onSelectChat: (id: string) => void;
+  activeThreadId?: string;
 }
 
 const ChatHistorySidebar: React.FC<ChatHistorySidebarProps> = ({
@@ -19,10 +20,11 @@ const ChatHistorySidebar: React.FC<ChatHistorySidebarProps> = ({
   onToggle,
   onNewChat,
   onSelectChat,
+  activeThreadId,
 }) => {
   return (
     <div className={`flex flex-col h-full w-80 bg-white/90 border-r border-gray-200/60 transition-all duration-300 ${isVisible ? '' : 'hidden'}`}>
-      <header className="p-4 border-b border-gray-200/60">
+      {/* <header className="p-4 border-b border-gray-200/60">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <button
@@ -34,7 +36,7 @@ const ChatHistorySidebar: React.FC<ChatHistorySidebarProps> = ({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <span className="text-lg font-semibold text-gray-900">Chat Threads</span>
+            <span className="text-lg font-semibold text-gray-900">Chat History</span>
           </div>
           <button
             onClick={onNewChat}
@@ -46,7 +48,7 @@ const ChatHistorySidebar: React.FC<ChatHistorySidebarProps> = ({
             </svg>
           </button>
         </div>
-      </header>
+      </header> */}
       <div className="flex-1 min-h-0 overflow-y-auto px-2 py-2 space-y-2">
         {chatHistory.length === 0 ? (
           <div className="text-gray-400 text-center mt-8">No chat threads yet.</div>
@@ -54,11 +56,11 @@ const ChatHistorySidebar: React.FC<ChatHistorySidebarProps> = ({
           chatHistory.map(thread => (
             <div
               key={thread.id}
-              className="rounded-xl px-4 py-3  hover:bg-blue-50  cursor-pointer transition-all duration-200 shadow-sm"
+              className={`rounded-xl px-4 py-3 cursor-pointer transition-all duration-200 shadow-sm ${activeThreadId === thread.id ? 'bg-blue-50 text-[#1677FF]' : 'hover:bg-blue-50'}`}
               onClick={() => onSelectChat(thread.id)}
             >
               <div className="flex items-center justify-between ">
-                <span className="font-medium text-gray-900 truncate max-w-[140px]">{thread.title}</span>
+                <span className="font-medium  truncate max-w-[140px]">{thread.title}</span>
                 <span className="text-xs text-gray-500 ml-2 whitespace-nowrap">{thread.time}</span>
               </div>
               <div className="text-xs text-gray-500 truncate mt-1">{thread.lastMessage}</div>

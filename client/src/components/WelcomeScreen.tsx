@@ -17,7 +17,7 @@ interface WelcomeScreenProps {
 
 import { useState } from 'react';
 
-const WelcomeScreen = ({ suggestions, onSuggestionClick }: WelcomeScreenProps) => {
+const WelcomeScreen = ({ suggestions, onSuggestionClick, onUserMessage }: WelcomeScreenProps) => {
   const [message, setMessage] = useState('');
   const suggestionIcons = [Zap, Brain, Target, Sparkles];
 
@@ -27,12 +27,7 @@ const WelcomeScreen = ({ suggestions, onSuggestionClick }: WelcomeScreenProps) =
         {/* Hero Section */}
         <div className="text-center space-y-6">
           <div className="relative">
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-blue-500/20 relative">
-              <Bot className="w-10 h-10 text-white" />
-              <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-full flex items-center justify-center shadow-md">
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-              </div>
-            </div>
+           
           </div>
           <div className="space-y-3">
             <h2 className="text-3xl font-bold text-gray-900 tracking-tight">How can I help you today?</h2>
@@ -41,17 +36,17 @@ const WelcomeScreen = ({ suggestions, onSuggestionClick }: WelcomeScreenProps) =
             </p>
           </div>
           {/* Primary Try now Button */}
-          <div className="flex justify-center mt-6">
+          {/* <div className="flex justify-center mt-6">
             <button className=" btn-primary">
               Try now
             </button>
-          </div>
+          </div> */}
         </div>
 
         {/* Suggestions Grid */}
-        <div className="space-y-6">
-          <h3 className="text-xl font-semibold text-gray-900 text-center">Quick actions</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        <div >
+          <h3 className="text-xl font-semibold text-gray-900 text-center mb-6">Quick actions</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto pb-10">
             {suggestions.map((suggestion, index) => {
               const IconComponent = suggestionIcons[index % suggestionIcons.length];
               return (

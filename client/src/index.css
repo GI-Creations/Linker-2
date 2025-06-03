@@ -71,7 +71,7 @@
 
   /* Primary Button: Blue gradient, white text, pill shape */
   .btn-primary {
-    @apply bg-[#1677FF] text-white font-semibold px-8 py-3 rounded-full shadow-md transition-all duration-200 hover:from-[#1466d6] hover:to-[#1677FF] hover:shadow-lg;
+    @apply bg-[#1677FF] text-white font-semibold px-8 py-3  shadow-md transition-all duration-200 hover:from-[#1466d6] hover:to-[#1677FF] hover:bg-black hover:shadow-lg;
   }
 
   /* Secondary Button: Light blue background, blue text, large pill shape, no border/shadow, big font */
@@ -80,9 +80,9 @@
     color: #1677FF;
     border: none;
     border-radius: 9999px;
-    font-size: 2rem;
+    font-size: 0.9rem;
     font-weight: 500;
-    padding: 0.75em 2em;
+    padding: 0.375em 1em;
     box-shadow: none;
     text-align: center;
     transition: background 0.2s;

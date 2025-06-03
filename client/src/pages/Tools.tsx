@@ -54,8 +54,8 @@ const Tools = () => {
   ];
 
   const categories = ['All', ...toolCategories.map(cat => cat.name)];
-  
-  const filteredTools = toolCategories.filter(category => 
+
+  const filteredTools = toolCategories.filter(category =>
     selectedCategory === 'All' || category.name === selectedCategory
   ).map(category => ({
     ...category,
@@ -69,26 +69,26 @@ const Tools = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="flex">
         <Sidebar />
-        
+
         <main className="flex-1 p-8">
           {/* Page Header */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Tools</h1>
+                <h1 className="text-3xl font-bold text-[#1677FF] mb-2">Tools</h1>
                 <p className="text-gray-600">Connect and manage your integration tools</p>
               </div>
-              
-              <Button className="btn-primary flex items-center gap-2">
+
+              <button className="btn-primary flex items-center gap-2">
                 <Plus className="w-4 h-4" />
                 Add Custom Tool
-              </Button>
+              </button>
             </div>
 
             {/* Search and Filter Bar */}
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
                   placeholder="Search tools..."
                   value={searchQuery}
@@ -96,19 +96,19 @@ const Tools = () => {
                   className="search-input"
                 />
               </div>
-              
+
               <div className="flex gap-2 flex-wrap">
                 {categories.map((category) => (
-                  <Button
+                  <button
                     key={category}
-                    variant={selectedCategory === category ? "default" : "outline"}
-                    size="sm"
                     onClick={() => setSelectedCategory(category)}
-                    className="flex items-center gap-1"
+                    className={
+                      `${selectedCategory === category ? 'btn-secondary font-bold' : 'btn-tertiary font-medium'} flex items-center gap-1`
+                    }
                   >
                     <Filter className="w-3 h-3" />
                     {category}
-                  </Button>
+                  </button>
                 ))}
               </div>
             </div>
@@ -118,7 +118,7 @@ const Tools = () => {
           <div className="space-y-8">
             {filteredTools.map((category) => (
               <div key={category.name} className="glass-card p-6">
-                <h3 className="section-title">{category.name}</h3>
+                <h3 className="section-title text-[#1677FF]">{category.name}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {category.tools.map((tool) => (
                     <div key={tool.name} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-all duration-200 card-hover">
@@ -126,10 +126,10 @@ const Tools = () => {
                         <div className="flex items-center gap-3">
                           <span className="text-2xl">{tool.icon}</span>
                           <div>
-                            <h4 className="font-semibold text-gray-900">{tool.name}</h4>
-                            <Badge 
+                            <h4 className="font-semibold text-gray-800">{tool.name}</h4>
+                            <Badge
                               variant={tool.status === 'Connected' ? 'default' : 'secondary'}
-                              className="text-xs"
+                              className={tool.status === 'Connected' ? 'text-xs bg-blue-50 text-[#1677FF] hover:bg-blue-50 hover:text-[#1677FF]' : 'text-xs text-[#1677FF]'}
                             >
                               {tool.status}
                             </Badge>
@@ -138,16 +138,16 @@ const Tools = () => {
                       </div>
                       <p className="text-sm text-gray-600 mb-4 line-clamp-2">{tool.description}</p>
                       <div className="flex gap-2">
-                        <Button 
-                          size="sm" 
+                        <button
+                          size="sm"
                           variant={tool.status === 'Connected' ? 'outline' : 'default'}
-                          className="flex-1"
+                          className="btn-secondary"
                         >
                           {tool.status === 'Connected' ? 'Configure' : 'Connect'}
-                        </Button>
-                        <Button size="sm" variant="ghost">
+                        </button>
+                        <button className='btn-tertiary text-sm'>
                           Learn More
-                        </Button>
+                        </button>
                       </div>
                     </div>
                   ))}
