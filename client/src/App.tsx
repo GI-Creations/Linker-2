@@ -8,7 +8,7 @@ import Index from "./pages/Index";
 import KnowledgeBases from "./pages/KnowledgeBases";
 import KnowledgeBaseDetail from "./pages/KnowledgeBaseDetail";
 import Tools from "./pages/Tools";
-import Dial from "./pages/inbox";
+import Dial from "./pages/Inbox";
 import NotFound from "./pages/NotFound";
 import FloatingNewChat from "./components/FloatingNewChat";
 
