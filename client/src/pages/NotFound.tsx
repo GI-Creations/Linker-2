@@ -28,7 +28,7 @@ const NotFound = () => {
             Go Back
           </Button>
           <Button 
-            onClick={() => navigate('/chat')}
+            onClick={() => navigate('/')}
             className="btn-primary flex items-center gap-2"
           >
             <Home className="w-4 h-4" />
