@@ -1,12 +1,13 @@
-
 import { useNavigate } from 'react-router-dom';
 
 interface Agent {
-  id: number;
-  title: string;
+  id: string;
+  name: string;
   description: string;
-  category: string;
-  integrations: string[];
+  status: 'active' | 'inactive';
+  tools: string[];
+  lastActive: string;
+  tasksCompleted: number;
 }
 
 interface AgentCardProps {
@@ -47,6 +48,9 @@ const AgentCard = ({ agent }: AgentCardProps) => {
     navigate('/inbox');
   };
 
+  // Ensure tools is an array
+  const toolsArray = Array.isArray(agent.tools) ? agent.tools : [];
+
   return (
     <div 
       className="glass-card p-6 hover:shadow-md cursor-pointer group transition-all duration-200 hover:scale-[1.02]"
@@ -54,7 +58,7 @@ const AgentCard = ({ agent }: AgentCardProps) => {
     >
       <div className="mb-4">
         <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-          {agent.title}
+          {agent.name}
         </h3>
         <p className="text-sm text-gray-600 leading-relaxed">
           {agent.description}
@@ -63,24 +67,24 @@ const AgentCard = ({ agent }: AgentCardProps) => {
       
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          {agent.integrations.slice(0, 3).map((integration, index) => (
+          {toolsArray.slice(0, 3).map((tool, index) => (
             <div
               key={index}
               className="w-6 h-6 rounded bg-gray-100 flex items-center justify-center text-xs"
-              title={integration}
+              title={tool}
             >
-              {getIntegrationIcon(integration)}
+              {getIntegrationIcon(tool.toLowerCase())}
             </div>
           ))}
-          {agent.integrations.length > 3 && (
+          {toolsArray.length > 3 && (
             <div className="w-6 h-6 rounded bg-gray-100 flex items-center justify-center text-xs text-gray-500">
-              +{agent.integrations.length - 3}
+              +{toolsArray.length - 3}
             </div>
           )}
         </div>
         
         <span className="badge">
-          {agent.category}
+          {agent.status}
         </span>
       </div>
     </div>

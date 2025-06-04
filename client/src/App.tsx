@@ -35,7 +35,7 @@ const AppContent = () => {
         <Route path="/knowledge-bases" element={<KnowledgeBases />} />
         <Route path="/knowledge-base/:id" element={<KnowledgeBaseDetail />} />
         <Route path="/tools" element={<Tools />} />
-        {/* <Route path="/agents" element={<Index/>} /> */}
+        <Route path="/agents" element={<Index />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
 
