@@ -73,7 +73,7 @@ const Index = () => {
                     <button
                       key={cat}
                       onClick={() => setSelectedCategory(cat)}
-                      className={`whitespace-nowrap px-3 py-1 rounded-full ${cat === selectedCategory ? 'bg-[#1677FF] text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                      className={`whitespace-nowrap px-3 py-1 rounded-full ${cat === selectedCategory ? 'btn-secondary' : 'btn-tertiary'}`}
                     >{cat}</button>
                   ))}
                 </div>
