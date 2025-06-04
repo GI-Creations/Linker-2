@@ -158,6 +158,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Cera Pro';
+  src: url('./fonts/Fontspring-DEMO-cerapro-medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
   font-family: 'Aeonik Pro', Arial, sans-serif;
 }

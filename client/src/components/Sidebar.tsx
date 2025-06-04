@@ -9,8 +9,8 @@ const Sidebar = () => {
   const navigationItems = [
     { icon: MessageCircle, label: 'Chat', path: '/chat' },
     { icon: Folder, label: 'Knowledge Bases', path: '/knowledge-bases' },
-    // { icon: Settings, label: 'Settings', path: '/settings' },
     { icon: Wrench, label: 'Tools', path: '/tools' },
+    { icon: Settings, label: 'Agents', path: '/agents' },
 
   ];
 
