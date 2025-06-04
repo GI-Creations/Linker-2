@@ -223,7 +223,7 @@ function Dial() {
                     </div>
                     <div>
                       <span className="font-semibold text-gray-900">{currentThread.title}</span>
-                      <span className="block text-sm text-gray-500">Active thread</span>
+                      <span className="block text-sm text-gray-500">Active thread </span>
                     </div>
                   </div>
                 </header>
