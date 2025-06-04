@@ -54,7 +54,7 @@ const KnowledgeBases = () => {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Knowledge Bases</h1>
+                <h1 className="text-3xl font-bold text-[#1677FF] mb-2">Knowledge Bases</h1>
                 <p className="text-gray-600">Manage your documents and knowledge repositories</p>
               </div>
               
@@ -83,17 +83,17 @@ const KnowledgeBases = () => {
               <div key={kb.id} className="glass-card p-6 card-hover cursor-pointer">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    {/* <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                       <Database className="w-5 h-5 text-blue-600" />
-                    </div>
+                    </div> */}
                     <div>
                       <h3 className="font-semibold text-gray-900">{kb.name}</h3>
-                      <Badge 
+                      {/* <Badge 
                         variant={kb.status === 'active' ? 'default' : 'secondary'}
                         className="bg-blue-50 text-[#1677FF] hover:bg-blue-50 hover:text-[#1677FF]"
                       >
                         {kb.status}
-                      </Badge>
+                      </Badge> */}
                     </div>
                   </div>
                 </div>

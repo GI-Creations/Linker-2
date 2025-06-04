@@ -1,4 +1,3 @@
-
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import AgentCard from '@/components/AgentCard';
@@ -38,7 +37,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="flex">
+      <div className="flex min-h-screen">
         <Sidebar />
         
         <main className="flex-1 p-8">

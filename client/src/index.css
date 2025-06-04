@@ -150,6 +150,11 @@
   }
 }
 
+/* Reduce global font size for smaller UI scaling */
+html {
+  font-size: 14px;
+}
+
 @font-face {
   font-family: 'Aeonik Pro';
   src: url('./fonts/AeonikTRIAL-Regular.otf') format('opentype');

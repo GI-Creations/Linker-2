@@ -130,13 +130,13 @@ const Tools = () => {
                         <h4 className="font-semibold text-gray-800">{tool.name}</h4>
                       </div>
                       <p className="text-sm text-gray-600 mb-2 line-clamp-2">{tool.description}</p>
-                      <div className="flex flex-wrap gap-1 mb-4">
+                      {/* <div className="flex flex-wrap gap-1 mb-4">
                         {tool.auth.map(method => (
                           <Badge key={method} variant="outline" className="text-xs text-[#1677FF]">
                             {method}
                           </Badge>
                         ))}
-                      </div>
+                      </div> */}
                       <button className="btn-secondary w-full mt-2">
                         Try it →
                       </button>
