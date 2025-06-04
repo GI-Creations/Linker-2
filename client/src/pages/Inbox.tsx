@@ -174,14 +174,14 @@ function Dial() {
                     </button>
                   </div>
                 </div>
-                <div className="mt-3">
+                {/* <div className="mt-3">
                   <SearchBox
                     placeholder="Search conversations..."
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     className="w-full"
                   />
-                </div>
+                </div> */}
               </header>
               <ChatHistorySidebar
                 isVisible={isSidebarVisible}
