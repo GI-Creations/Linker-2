@@ -27,7 +27,7 @@ const KnowledgeBases = () => {
       size: '2.4 MB'
     },
     {
-      id: '2', 
+      id: '2',
       name: 'Customer Support FAQ',
       description: 'Frequently asked questions and support articles',
       documentsCount: 189,
@@ -55,7 +55,7 @@ const KnowledgeBases = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="flex">
         <Sidebar />
-        
+
         <main className="flex-1 p-8">
           {/* Page Header */}
           <div className="mb-8">
@@ -64,7 +64,7 @@ const KnowledgeBases = () => {
                 <h1 className="text-3xl font-bold text-[#1677FF] mb-2">Knowledge Bases</h1>
                 <p className="text-gray-600">Manage your documents and knowledge repositories</p>
               </div>
-              
+
               <Dialog>
                 <DialogTrigger asChild>
                   <button className="btn-primary flex items-center gap-2">
@@ -94,7 +94,7 @@ const KnowledgeBases = () => {
                 placeholder="Search knowledge bases..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 pr-4 py-3 rounded-full border  bg-white shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200 text-base"
+                className="pl-12 pr-4 py-6 rounded-full border  bg-white shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200 text-base"
               />
             </div>
           </div>
@@ -119,9 +119,9 @@ const KnowledgeBases = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <p className="text-sm text-gray-600 mb-4 line-clamp-2">{kb.description}</p>
-                
+
                 <div className="space-y-2 text-xs text-gray-500">
                   <div className="flex items-center justify-between">
                     <span className="flex items-center gap-1">
@@ -134,13 +134,13 @@ const KnowledgeBases = () => {
                     Updated {kb.lastUpdated}
                   </div>
                 </div>
-                
+
                 <div className="flex gap-2 mt-4 pt-4 items-center">
                   <button className="flex-1 btn-secondary  rounded-full px-6 text-base font-medium">
                     Open
                   </button>
                   <button className=" w-10 h-10 rounded-full flex items-center justify-center hover:text-[#1677FF] transition-all duration-200">
-                    <Upload  />
+                    <Upload />
                   </button>
                 </div>
               </div>
@@ -164,7 +164,7 @@ const KnowledgeBases = () => {
                     Create Knowledge Base
                   </button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-lg w-full overflow-hidden">
                   <DialogHeader>
                     <DialogTitle>Create Knowledge Base</DialogTitle>
                   </DialogHeader>
@@ -176,6 +176,7 @@ const KnowledgeBases = () => {
                     </div>
                   </form>
                 </DialogContent>
+
               </Dialog>
             </div>
           )}

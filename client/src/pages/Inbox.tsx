@@ -151,14 +151,8 @@ function Dial() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                       </svg>
                     </button>
-                    <IconBtn
-                      size="sm"
-                      onClick={handleStartThread}
-                      className="p-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl transition-all duration-200 hover:shadow-md"
-                    >
-                      <NewIcon className="w-5 h-2  " />
-                    </IconBtn>
-                    <span className="text-lg font-semibold text-gray-900">New Chat </span>
+
+                    <button onClick={handleStartThread} className="btn-primary text-lg text-3xl">+ New Chat</button>
                   </div>
 
                 </div>

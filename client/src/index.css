@@ -71,8 +71,9 @@
 
   /* Primary Button: Blue gradient, white text, pill shape */
   .btn-primary {
-    @apply bg-[#1677FF] text-white font-semibold px-8 py-3  shadow-md transition-all duration-200 hover:from-[#1466d6] hover:to-[#1677FF] hover:bg-black hover:shadow-lg;
+    @apply bg-[#1677FF] text-white font-semibold px-8 py-3 shadow-md transition-all duration-200 hover:from-[#1466d6] hover:to-[#1677FF] hover:bg-black hover:shadow-lg rounded-full;
   }
+  
 
   /* Secondary Button: Light blue background, blue text, large pill shape, no border/shadow, big font */
   .btn-secondary {
@@ -90,7 +91,7 @@
 
   /* Tertiary Button: Transparent, dark text, blue on hover, no border */
   .btn-tertiary {
-    @apply bg-transparent text-neutral-800 hover:text-[#1677FF] font-semibold text-lg px-4 py-2 shadow-none border-none transition-all duration-200 hover:-translate-y-0.5;
+    @apply bg-transparent  hover:text-[#1677FF]  shadow-none border-none ;
   }
 
   .glass-card {
@@ -109,12 +110,9 @@
     @apply px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200;
   }
 
-  .btn-primary {
-    @apply bg-[#1677FF] hover:from-[#1466d6] text-white font-semibold px-6 py-3 rounded-xl shadow-lg shadow-blue-500/25 transition-all duration-200;
-  }
-
+ 
   .btn-secondary {
-    @apply bg-blue-50 hover:border-[#1677FF] text-[#1677FF] font-medium px-6 py-3 rounded-xl border border-gray-200 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5;
+    @apply bg-blue-50 hover:border-[#1677FF] text-[#1677FF] font-medium px-6 py-3 rounded-full border border-gray-200 transition-all duration-200 hover:shadow-md ;
   }
 
   .btn-ghost {
