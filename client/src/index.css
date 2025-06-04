@@ -81,12 +81,16 @@
     color: #1677FF;
     border: none;
     border-radius: 9999px;
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 500;
     padding: 0.375em 1em;
     box-shadow: none;
     text-align: center;
     transition: background 0.2s;
+  }
+  .btn-tertiary {
+    font-size: 0.9rem;
+
   }
 
   /* Tertiary Button: Transparent, dark text, blue on hover, no border */
