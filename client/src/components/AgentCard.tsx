@@ -4,7 +4,7 @@ interface Agent {
   id: string;
   name: string;
   description: string;
-  status: 'active' | 'inactive';
+  status: 'active' | 'inactive' | 'popular';
   tools: string[];
   lastActive: string;
   tasksCompleted: number;
@@ -83,7 +83,7 @@ const AgentCard = ({ agent }: AgentCardProps) => {
           )}
         </div>
         
-        <span className="badge">
+        <span className="badge btn-secondary">
           {agent.status}
         </span>
       </div>

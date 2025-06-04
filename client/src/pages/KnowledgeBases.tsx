@@ -1,9 +1,16 @@
-
 import { useState } from 'react';
 import { Search, Plus, FileText, Database, Upload } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import Sidebar from '@/components/Sidebar';
 
 const KnowledgeBases = () => {
@@ -58,11 +65,26 @@ const KnowledgeBases = () => {
                 <p className="text-gray-600">Manage your documents and knowledge repositories</p>
               </div>
               
-              <button
-               className="btn-primary flex items-center gap-2">
-                <Plus className="w-4 h-4" />
-                Create Knowledge Base
-              </button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="btn-primary flex items-center gap-2">
+                    <Plus className="w-5 h-5" />
+                    Create Knowledge Base
+                  </button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Create Knowledge Base</DialogTitle>
+                  </DialogHeader>
+                  <form>
+                    <Input placeholder="Name" className="mb-4 w-full" />
+                    <Textarea placeholder="Description" className="w-full" />
+                    <div className="flex justify-end mt-6">
+                      <Button type="submit">Create</Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
 
             {/* Search Bar */}
@@ -135,10 +157,26 @@ const KnowledgeBases = () => {
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
                 {searchQuery ? 'Try adjusting your search criteria' : 'Create your first knowledge base to store and organize documents'}
               </p>
-              <Button className="btn-primary">
-                <Plus className="w-4 h-4 mr-2" />
-                Create Knowledge Base
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="btn-primary">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Knowledge Base
+                  </button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Create Knowledge Base</DialogTitle>
+                  </DialogHeader>
+                  <form>
+                    <Input placeholder="Name" className="mb-4 w-full" />
+                    <Textarea placeholder="Description" className="w-full" />
+                    <div className="flex justify-end mt-6">
+                      <button type="submit" className="btn-primary">Create</button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
           )}
         </main>
