@@ -27,7 +27,7 @@ const WelcomeScreen = ({ suggestions, onSuggestionClick, onUserMessage }: Welcom
         {/* Hero Section */}
         <div className="text-center space-y-6">
           <div className="relative">
-           
+
           </div>
           <div className="space-y-3">
             <h2 className="text-3xl font-bold text-gray-900 tracking-tight">How can I help you today?</h2>
@@ -35,12 +35,7 @@ const WelcomeScreen = ({ suggestions, onSuggestionClick, onUserMessage }: Welcom
               Create agents, analyze data, or get insights from your knowledge bases and tools
             </p>
           </div>
-          {/* Primary Try now Button */}
-          {/* <div className="flex justify-center mt-6">
-            <button className=" btn-primary">
-              Try now
-            </button>
-          </div> */}
+
         </div>
 
         {/* Suggestions Grid */}
@@ -56,9 +51,7 @@ const WelcomeScreen = ({ suggestions, onSuggestionClick, onUserMessage }: Welcom
                   className="group p-4 bg-white/90 backdrop-blur-sm border border-gray-200/60 hover:border-[#1677FF] rounded-xl text-left text-gray-700 hover:text-gray-900 transition-all duration-200 hover:shadow-md hover:bg-white/95 hover:-translate-y-0.5"
                 >
                   <div className="flex items-center gap-4">
-                    {/* <div className="w-12 h-12 bg-gradient-to-br from-blue-50 to-blue-100 group-hover:from-blue-100 group-hover:to-blue-200 rounded-xl flex items-center justify-center transition-all duration-200 group-hover:shadow-md shadow-sm">
-                      <IconComponent className="w-6 h-6 text-blue-600 group-hover:text-blue-700" />
-                    </div> */}
+
                     <div className="flex-1">
                       <span className="font-medium text-gray-900 group-hover:text-[#1677FF] transition-colors duration-200">
                         {suggestion.text}
@@ -71,27 +64,10 @@ const WelcomeScreen = ({ suggestions, onSuggestionClick, onUserMessage }: Welcom
           </div>
         </div>
 
-        {/* Features Preview */}
-        {/* <div className="text-center space-y-4">
-          <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500">
-            <div className="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow-sm border border-gray-200/60">
-              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-              <span>24/7 Available</span>
-            </div>
-            <div className="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow-sm border border-gray-200/60">
-              <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-              <span>14+ Integrations</span>
-            </div>
-            <div className="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-full shadow-sm border border-gray-200/60">
-              <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-              <span>Smart Automation</span>
-            </div>
-          </div>
-        </div> */}
 
-      </div>
-      {/* Chat input at the bottom of WelcomeScreen */}
-      <div >
+
+
+        <footer className="border-t border-gray-200/60 bg-white/80 backdrop-blur-sm">
         <ChatInput
           message={message}
           onMessageChange={e => setMessage(e.target.value)}
@@ -114,6 +90,7 @@ const WelcomeScreen = ({ suggestions, onSuggestionClick, onUserMessage }: Welcom
           filteredMentions={[]}
           onMentionClick={() => { }}
         />
+        </footer>
       </div>
     </div>
   );

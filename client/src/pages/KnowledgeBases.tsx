@@ -100,9 +100,9 @@ const KnowledgeBases = () => {
           </div>
 
           {/* Knowledge Bases Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr mb-8">
             {filteredKnowledgeBases.map((kb) => (
-              <div key={kb.id} className="glass-card p-6 card-hover cursor-pointer">
+              <div key={kb.id} className="glass-card p-6 card-hover cursor-pointer h-full flex flex-col justify-between">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     {/* <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">

@@ -20,7 +20,7 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="sidebar w-full md:w-72 min-h-screen bg-[#1f232e]  rounded-2xl shadow-xl p-4 flex flex-col gap-6" style={{ border: '1.5px solid #dbeafe' }}>
+    <aside className="  w-full md:w-64 min-h-screen bg-[#1f232e]  rounded-2xl shadow-xl p-2 flex flex-col gap-6" style={{ border: '1.5px solid #dbeafe' }}>
       {/* Header */}
       {/* <div className="flex flex-col gap-3 px-2 pt-2 pb-4">
         <button className="btn-primary">
@@ -37,7 +37,7 @@ const Sidebar = () => {
           return (
             <div
               key={index}
-              className={`flex items-center gap-4 px-5 py-4 rounded-xl cursor-pointer transition-all duration-200 text-lg font-medium shadow-sm ${isActive
+              className={`text-[14px] flex items-center gap-4 px-5 py-4 rounded-xl cursor-pointer transition-all duration-200 text-lg font-medium shadow-sm ${isActive
                 ? 'bg-[#1677FF] text-white'
                 : 'text-white hover:text-[#1677FF]'
                 }`}
