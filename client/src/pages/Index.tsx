@@ -1,5 +1,5 @@
 import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import AgentCard from '@/components/AgentCard';
 import AddAgentDialog from '@/components/AddAgentDialog';
 import Sidebar from '@/components/Sidebar';
