@@ -1,4 +1,3 @@
-
 import { Settings, MessageCircle, Folder, Wrench } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -21,7 +20,7 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="w-full md:w-72 min-h-screen bg-[#1f232e]  rounded-2xl shadow-xl p-4 flex flex-col gap-6" style={{ border: '1.5px solid #dbeafe' }}>
+    <aside className="sidebar w-full md:w-72 min-h-screen bg-[#1f232e]  rounded-2xl shadow-xl p-4 flex flex-col gap-6" style={{ border: '1.5px solid #dbeafe' }}>
       {/* Header */}
       {/* <div className="flex flex-col gap-3 px-2 pt-2 pb-4">
         <button className="btn-primary">

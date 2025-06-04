@@ -152,6 +152,11 @@
 
 /* Reduce global font size for smaller UI scaling */
 html {
+  font-size: 14px;
+}
+
+/* Sidebar specific smaller font */
+.sidebar {
   font-size: 12px;
 }
 
