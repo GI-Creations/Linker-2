@@ -121,7 +121,7 @@ const Tools = () => {
           <div className="space-y-8">
             {filteredTools.map((category) => (
               <div key={category.name} className=" p-1">
-                {/* <h3 className="section-title text-[#1677FF]">{category.name}</h3> */}
+                <h3 className="section-title text-[#1677FF]">{category.name}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {category.tools.map((tool) => (
                     <div key={tool.name} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-all duration-200 card-hover">
