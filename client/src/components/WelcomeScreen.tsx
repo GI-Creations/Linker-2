@@ -1,7 +1,7 @@
-
 import { Bot, Sparkles, Zap, Brain, Target } from 'lucide-react';
 import { Button } from './ui/button';
 import ChatInput from './ChatInput';
+import { useState } from 'react';
 
 interface Suggestion {
   id: string;
@@ -15,59 +15,56 @@ interface WelcomeScreenProps {
   onUserMessage?: (text: string) => void;
 }
 
-import { useState } from 'react';
-
 const WelcomeScreen = ({ suggestions, onSuggestionClick, onUserMessage }: WelcomeScreenProps) => {
   const [message, setMessage] = useState('');
   const suggestionIcons = [Zap, Brain, Target, Sparkles];
 
   return (
-    <div className="flex-1 max-w-4xl mx-auto w-full p-8 flex flex-col justify-center">
-      <div className="space-y-12">
-        {/* Hero Section */}
-        <div className="text-center space-y-6">
-          <div className="relative">
+    <div className="flex-1 flex flex-col h-full">
+      {/* Main content area */}
+      <div className="flex-1 flex items-center justify-center p-6">
+        <div className="max-w-4xl mx-auto w-full space-y-12">
+          {/* Hero Section */}
+          <div className="text-center space-y-6">
 
+            <div className="space-y-3">
+              <h2 className="text-3xl font-bold text-gray-900 tracking-tight">How can I help you today?</h2>
+              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                Create agents, analyze data, or get insights from your knowledge bases and tools
+              </p>
+            </div>
           </div>
-          <div className="space-y-3">
-            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">How can I help you today?</h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Create agents, analyze data, or get insights from your knowledge bases and tools
-            </p>
-          </div>
 
-        </div>
+          {/* Suggestions Grid */}
+          <div>
+            <h3 className="text-xl font-semibold text-gray-900 text-center mb-6">Quick actions</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+              {suggestions.map((suggestion, index) => {
+                const IconComponent = suggestionIcons[index % suggestionIcons.length];
+                return (
+                  <button
+                    key={suggestion.id}
+                    onClick={() => onSuggestionClick(suggestion)}
+                    className="group p-4 bg-white/90 backdrop-blur-sm border border-gray-200/60 hover:border-[#1677FF] rounded-xl text-left text-gray-700 hover:text-gray-900 transition-all duration-200 hover:shadow-md hover:bg-white/95 hover:-translate-y-0.5"
+                  >
+                    <div className="flex items-center gap-4">
 
-        {/* Suggestions Grid */}
-        <div >
-          <h3 className="text-xl font-semibold text-gray-900 text-center mb-6">Quick actions</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto pb-10">
-            {suggestions.map((suggestion, index) => {
-              const IconComponent = suggestionIcons[index % suggestionIcons.length];
-              return (
-                <button
-                  key={suggestion.id}
-                  onClick={() => onSuggestionClick(suggestion)}
-                  className="group p-4 bg-white/90 backdrop-blur-sm border border-gray-200/60 hover:border-[#1677FF] rounded-xl text-left text-gray-700 hover:text-gray-900 transition-all duration-200 hover:shadow-md hover:bg-white/95 hover:-translate-y-0.5"
-                >
-                  <div className="flex items-center gap-4">
-
-                    <div className="flex-1">
-                      <span className="font-medium text-gray-900 group-hover:text-[#1677FF] transition-colors duration-200">
-                        {suggestion.text}
-                      </span>
+                      <div className="flex-1">
+                        <span className="font-medium text-gray-900 group-hover:text-[#1677FF] transition-colors duration-200">
+                          {suggestion.text}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </button>
-              );
-            })}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
+      </div>
 
-
-
-
-        <footer className="border-t border-gray-200/60 bg-white/80 backdrop-blur-sm">
+      {/* Fixed Footer with ChatInput */}
+      <footer className="border-t border-gray-200/60 bg-white/80 backdrop-blur-sm">
         <ChatInput
           message={message}
           onMessageChange={e => setMessage(e.target.value)}
@@ -90,8 +87,7 @@ const WelcomeScreen = ({ suggestions, onSuggestionClick, onUserMessage }: Welcom
           filteredMentions={[]}
           onMentionClick={() => { }}
         />
-        </footer>
-      </div>
+      </footer>
     </div>
   );
 };

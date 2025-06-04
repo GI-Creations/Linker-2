@@ -37,8 +37,6 @@ function Dial() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       setThreads(JSON.parse(saved));
-    } else {
-      setThreads([]);
     }
   }, []);
 
@@ -63,6 +61,7 @@ function Dial() {
 
   // Filter threads by search
   const filteredThreads = useMemo(() => {
+    if (!query.trim()) return threads;
     const q = query.toLowerCase();
     return threads.filter(t =>
       t.title.toLowerCase().includes(q) ||
@@ -85,7 +84,34 @@ function Dial() {
     setThreads(prev => [newThread, ...prev]);
     setActiveThreadId(newId);
     setInput('');
+    
+    // If starting with a message, simulate AI response
+    if (action?.text) {
+      setTimeout(() => {
+        handleAIResponse(newId, action.text);
+      }, 1000);
+    }
+    
     setTimeout(() => inputRef.current?.focus(), 100);
+  }, []);
+
+  // Handle AI response simulation
+  const handleAIResponse = useCallback((threadId: string, userMessage: string) => {
+    const aiResponse = 'Thank you for your message. How can I assist you further?';
+    setThreads(prev => prev.map(t =>
+      t.id === threadId
+        ? {
+          ...t,
+          messages: [
+            ...t.messages,
+            { id: `msg-${Date.now()}`, text: aiResponse, timestamp: new Date(), isUser: false }
+          ],
+          lastMessage: aiResponse,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }
+        : t
+    ));
+    setLoading(false);
   }, []);
 
   // Send a message in current thread
@@ -110,37 +136,26 @@ function Dial() {
 
     // Simulate AI response
     setTimeout(() => {
-      const aiResponse = 'Thank you for your message. How can I assist you further?';
-      setThreads(prev => prev.map(t =>
-        t.id === currentThread.id
-          ? {
-            ...t,
-            messages: [
-              ...t.messages,
-              { id: `msg-${Date.now()}`, text: aiResponse, timestamp: new Date(), isUser: false }
-            ],
-            lastMessage: aiResponse,
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          }
-          : t
-      ));
-      setLoading(false);
+      handleAIResponse(currentThread.id, input);
     }, 1000);
-  }, [input, currentThread]);
+  }, [input, currentThread, handleAIResponse]);
 
-  // Chat log for current thread
-  const chatLog = currentThread?.messages || [];
+  // Reset to welcome screen
+  const handleNewChat = useCallback(() => {
+    setActiveThreadId(null);
+    setInput('');
+  }, []);
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="flex h-screen">
         <Sidebar />
         <main className="flex-1 flex overflow-hidden">
-          {/* Thread List */}
+          {/* Thread List Sidebar */}
           {isSidebarVisible ? (
             <aside className="w-80 bg-white/90 backdrop-blur-sm border-r border-gray-200/60 flex flex-col transition-all duration-300 ease-in-out">
               <header className="p-4 border-b border-gray-200/60">
-                <div className="flex items-center justify-between ">
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setIsSidebarVisible(false)}
@@ -151,12 +166,22 @@ function Dial() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                       </svg>
                     </button>
-
-                    <button onClick={handleStartThread} className="btn-primary text-lg text-3xl">+ New Chat</button>
+                    <button 
+                      onClick={handleNewChat} 
+                      className="btn-primary"
+                    >
+                      + New Chat
+                    </button>
                   </div>
-
                 </div>
-
+                <div className="mt-3">
+                  <SearchBox
+                    placeholder="Search conversations..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="w-full"
+                  />
+                </div>
               </header>
               <ChatHistorySidebar
                 isVisible={isSidebarVisible}
@@ -168,12 +193,12 @@ function Dial() {
                   lastMessage: thread.lastMessage,
                   time: thread.time
                 }))}
-                onNewChat={handleStartThread}
+                onNewChat={handleNewChat}
                 onSelectChat={(id) => setActiveThreadId(id)}
               />
             </aside>
           ) : (
-            <div className="w-10 bg-white/90 border-r border-gray-200/60 h-full flex flex-col items-center transition-all duration-300 ease-in-out relative">
+            <div className="w-12 bg-white/90 border-r border-gray-200/60 h-full flex flex-col items-center transition-all duration-300 ease-in-out relative">
               <button
                 className="w-8 h-8 flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl shadow-md transition-all duration-200 absolute left-1/2 -translate-x-1/2 top-4"
                 onClick={() => setIsSidebarVisible(true)}
@@ -185,10 +210,12 @@ function Dial() {
               </button>
             </div>
           )}
+
           {/* Main Chat Area */}
           <section className="flex-1 flex flex-col bg-white/50 backdrop-blur-sm">
             {currentThread ? (
               <>
+                {/* Chat Header */}
                 <header className="p-4 border-b border-gray-200/60 bg-white/80 backdrop-blur-sm">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-blue-50 rounded-xl flex items-center justify-center shadow-md shadow-blue-500/20">
@@ -200,8 +227,10 @@ function Dial() {
                     </div>
                   </div>
                 </header>
+
+                {/* Messages */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gradient-to-br from-gray-50/50 to-white/50">
-                  {chatLog.map(msg => (
+                  {currentThread.messages.map(msg => (
                     <ChatMessage
                       key={msg.id}
                       id={msg.id}
@@ -211,7 +240,7 @@ function Dial() {
                     />
                   ))}
                   {loading && (
-                    <div className="flex items-center gap-3 text-gray-500 bg-white/80 p-3 rounded-xl border border-gray-200/60 shadow-sm max-w-md mx-auto">
+                    <div className="flex items-center gap-3 text-gray-500 bg-white/80 p-3 rounded-xl border border-gray-200/60 shadow-sm max-w-md">
                       <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
                       <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse delay-75"></div>
                       <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse delay-150"></div>
@@ -219,6 +248,8 @@ function Dial() {
                     </div>
                   )}
                 </div>
+
+                {/* Chat Input */}
                 <footer className="border-t border-gray-200/60 bg-white/80 backdrop-blur-sm">
                   <ChatInput
                     message={input}
@@ -238,9 +269,12 @@ function Dial() {
                 </footer>
               </>
             ) : (
-              <div className="flex-1 flex items-center justify-center p-6 bg-gradient-to-br from-gray-50/50 to-white/50">
-                <WelcomeScreen suggestions={actions} onSuggestionClick={handleStartThread} onUserMessage={msg => handleStartThread({ text: msg })} />
-              </div>
+              /* Welcome Screen */
+              <WelcomeScreen
+                suggestions={actions}
+                onSuggestionClick={handleStartThread}
+                onUserMessage={msg => handleStartThread({ text: msg })}
+              />
             )}
           </section>
         </main>
