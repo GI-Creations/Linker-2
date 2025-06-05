@@ -1,0 +1,14 @@
+{
+    "planner": {
+        "llm": "ChatAnthropic",
+        "model": "claude-3-5-sonnet-20241022",
+        "temperature": 0.0,
+        "api_key_name": "ANTHROPIC_API_KEY"
+    },
+    "joiner": {
+        "llm": "ChatAnthropic",
+        "model": "claude-3-5-sonnet-20241022",
+        "temperature": 0.0,
+        "api_key_name": "ANTHROPIC_API_KEY"
+    }
+}

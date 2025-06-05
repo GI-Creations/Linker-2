@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log Viewer</title>
+    <style>
+      /* General Styles */
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #e9ecef;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        max-width: 1500px;
+        width: 100%;
+      }
+
+      h1 {
+        text-align: center;
+        color: #343a40;
+        margin-bottom: 20px;
+        font-size: 1.8em;
+      }
+
+      /* Horizontal filter form styling */
+      #filter-form {
+        display: flex;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 42px;
+        width: 100%;
+        max-width: 1500px;
+      }
+
+      #filter-form div {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 180px;
+      }
+
+      label {
+        font-size: 1em;
+        font-weight: bold;
+        color: #495057;
+        margin-bottom: 5px;
+      }
+
+      input[type="text"],
+      input[type="datetime-local"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        font-size: 1em;
+        transition: border-color 0.3s ease;
+      }
+
+      input[type="text"]:focus,
+      input[type="datetime-local"]:focus {
+        border-color: #80bdff;
+        outline: none;
+      }
+
+      button {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: auto;
+        align-self: flex-end; /* Align button at the end of the line */
+      }
+
+      button:hover {
+        background-color: #218838;
+      }
+
+      table {
+        margin-top: 20px;
+        width: 100%;
+        border-collapse: collapse;
+        background-color: white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #28a745;
+        color: white;
+      }
+
+      tr:hover {
+        background-color: #f2f2f2;
+      }
+
+      .message {
+        margin-top: 20px;
+        color: red;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Log Viewer</h1>
+
+      <form id="filter-form">
+        <div>
+          <label for="user_id">User ID:</label>
+          <input type="text" id="user_id" name="user_id" />
+        </div>
+        <div>
+          <label for="chat_profile">Chat Profile:</label>
+          <input type="text" id="chat_profile" name="chat_profile" />
+        </div>
+        <div>
+          <label for="start_time">Start Time:</label>
+          <input type="datetime-local" id="start_time" name="start_time" />
+        </div>
+        <div>
+          <label for="end_time">End Time:</label>
+          <input type="datetime-local" id="end_time" name="end_time" />
+        </div>
+        <button type="button" onclick="filterLogs()">Filter</button>
+      </form>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>User ID</th>
+            <th>Chat Profile</th>
+            <th>Link</th>
+          </tr>
+        </thead>
+        <tbody id="logs-table-body">
+          {% for log in logs %}
+          <tr>
+            <td>{{ log.timestamp }}</td>
+            <td>{{ log.user_id }}</td>
+            <td>{{ log.chat_profile }}</td>
+            <td><a href="{{ log.link }}">View</a></td>
+          </tr>
+          {% endfor %} {% if logs|length == 0 %}
+          <tr>
+            <td colspan="4" class="message">No logs found.</td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+
+      <div id="no-logs-message" class="message" style="display: none">
+        No logs found.
+      </div>
+    </div>
+
+    <script>
+      // Function to send the filter request and update the table with results
+      async function filterLogs() {
+        // Get form data
+        const formData = new FormData(document.getElementById("filter-form"));
+        const queryParams = new URLSearchParams();
+        formData.forEach((value, key) => {
+          if (value) {
+            queryParams.append(key, value);
+          }
+        });
+
+        // Send AJAX request
+        try {
+          const response = await fetch(
+            `/api/v1/logs?${queryParams.toString()}`
+          );
+          const logs = await response.json();
+
+          // Get the table body element
+          const tableBody = document.getElementById("logs-table-body");
+
+          // Clear previous logs
+          tableBody.innerHTML = "";
+
+          // If no logs are found
+          if (logs.length === 0) {
+            document.getElementById("no-logs-message").style.display = "block";
+          } else {
+            document.getElementById("no-logs-message").style.display = "none";
+
+            // Populate the table with logs
+            logs.forEach((log) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                            <td>${log.timestamp}</td>
+                            <td>${log.user_id}</td>
+                            <td>${log.chat_profile}</td>
+                            <td><a href="${log.link}">View</a></td>
+                        `;
+              tableBody.appendChild(row);
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching logs:", error);
+        }
+      }
+    </script>
+  </body>
+</html>

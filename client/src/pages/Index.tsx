@@ -65,7 +65,15 @@ const Index = () => {
                 >{tab} {tab === 'Your agents' ? `(${yourAgents.length})` : ''}</button>
               ))}
             </div>
+
             {/* Filters and Search Row */}
+            <div className="relative  max-w-md mb-4">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
+              <Input
+                type="text" placeholder={`Search ${selectedTab.toLowerCase()}`} value={searchTerm}
+                className="pl-12 pr-4 py-6 rounded-full border  bg-white shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200 text-base"
+                onChange={e => setSearchTerm(e.target.value)} />
+            </div>
             {selectedTab === 'Templates' && (
               <div className="flex items-center justify-between mb-6">
                 <div className="flex space-x-3 overflow-x-auto">
@@ -73,32 +81,16 @@ const Index = () => {
                     <button
                       key={cat}
                       onClick={() => setSelectedCategory(cat)}
-                      className={`whitespace-nowrap px-3 py-1 rounded-full ${cat === selectedCategory ? 'btn-secondary' : 'btn-tertiary'}`}
+                      className={`whitespace-nowrap px-3 py-1 mb-2 rounded-full ${cat === selectedCategory ? 'btn-secondary' : 'btn-tertiary'}`}
                     >{cat}</button>
                   ))}
                 </div>
-                <div className="relative">
-                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
-                  <Input
-                    type="text"
-                    placeholder={`Search ${selectedTab.toLowerCase()}`}
-                    value={searchTerm}
-                    className="pl-12 pr-4 py-6 rounded-full border  bg-white shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200 text-base"
-                    onChange={e => setSearchTerm(e.target.value)}
-                  />
-                </div>
+
               </div>
             )}
-            {selectedTab !== 'Templates' && (
-              <div className="relative  max-w-md">
-                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
-            
-                <Input
-                 type="text" placeholder={`Search ${selectedTab.toLowerCase()}`} value={searchTerm}
-                  className="pl-12 pr-4 py-6 rounded-full border  bg-white shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200 text-base"
-                  onChange={e => setSearchTerm(e.target.value)} />
-              </div>
-            )}
+
+
+
           </div>
 
           {/* Agents Grid */}

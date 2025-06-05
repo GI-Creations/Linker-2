@@ -67,7 +67,7 @@ const Tools = () => {
   return (
     <div
       className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100"
-      style={{ fontFamily: 'Cera Pro, Arial, sans-serif' }}
+      
     >
       <div className="flex">
         <Sidebar />
@@ -104,7 +104,7 @@ const Tools = () => {
 
 
           {/* Category Filters */}
-          <div className="flex items-center gap-3 mb-10 overflow-x-auto pb-2">
+          <div className="flex items-center gap-3 mb-10  overflow-x-auto pb-2 pl-5">
             {categories.map((category) => (
               <button
                 key={category}
@@ -123,11 +123,11 @@ const Tools = () => {
           <div className="space-y-8">
             {filteredTools.map((category) => (
               <div key={category.name} className=" p-1">
-                <h3 className="section-title text-[#1677FF]">{category.name}</h3>
+                {/* <h3 className="section-title text-[#1677FF]">{category.name}</h3> */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {category.tools.map((tool) => (
                     <div key={tool.name} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-all duration-200 card-hover">
-                      <div className="flex items-center gap-3 mb-3">
+                      <div className="flex flex-col items-start gap-3 mb-3">
                         <span className="text-2xl">{tool.icon}</span>
                         <h4 className=" text-gray-800">{tool.name}</h4>
                       </div>

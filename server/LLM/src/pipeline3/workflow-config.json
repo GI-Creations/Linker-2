@@ -1,0 +1,10 @@
+{
+    "useWebSearchTool": {
+        "value": true,
+        "type": "switch"
+    },
+    "useGithubComposioTool": {
+        "value": true,
+        "type": "switch"
+    }
+}

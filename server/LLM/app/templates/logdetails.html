@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e9ecef;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        .left-panel {
+            flex: 3;
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .right-panel {
+            flex: 1;
+            background-color: white;
+            border-left: 1px solid #ddd;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #graph {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .node {
+            cursor: pointer;
+            fill: #6fa3ef;
+            stroke: #555;
+            stroke-width: 2;
+            filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.2));
+        }
+
+        .edge {
+            stroke: #999;
+            stroke-width: 1.5;
+            marker-end: url(#arrowhead);
+            opacity: 0.8;
+        }
+
+        .edge.highlighted {
+            stroke-width: 1.5;
+            opacity: 1;
+            stroke: #008000;
+        }
+
+        .node.highlighted {
+            fill: #ff704d;
+        }
+
+        .details {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .details h2 {
+            font-size: 16px;
+            color: #343a40;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .details p,
+        .details strong {
+            font-size: 14px;
+            color: #495057;
+            margin: 5px 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            word-break: break-word;
+            text-align: left;
+            display: block;
+        }
+
+        .details.collapsed p {
+            display: none;
+        }
+
+        #resetZoom {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #resetZoom:hover {
+            background-color: #218838;
+        }
+
+        #logviewer {
+            position: absolute;
+            top: 10px;
+            left: 150px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #logviewer:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="left-panel">
+        <button id="resetZoom">Reset Zoom</button>
+        <button id="logviewer">Return to LogViewer</button>
+        <div id="graph"></div>
+    </div>
+    <div class="right-panel">
+        <div class="details" id="nodeMetadataSection">
+            <h2 id="toggleMetadata">
+                Node Metadata <span id="toggleIcon">▼</span>
+            </h2>
+            <p id="node_metadata">Click on a node to see details.</p>
+        </div>
+        <div class="details">
+            <h2>Chat Profile</h2>
+            <p id="chat_profile">Loading...</p>
+        </div>
+        <div class="details">
+            <h2>Comparison Profiles</h2>
+            <p id="comparison_profiles">Loading...</p>
+        </div>
+        <div class="details">
+            <h2>User ID</h2>
+            <p id="user_id">Loading...</p>
+        </div>
+        <div class="details">
+            <h2>Final Answer</h2>
+            <p id="final_answer">Loading...</p>
+        </div>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        const logData = {{ log_data | tojson }};
+
+        // Populate the static right panel with general log data
+        document.getElementById("chat_profile").innerText = logData.chat_profile || "Not available";
+        document.getElementById("comparison_profiles").innerText = logData.comparison_profiles || "Not available";
+        document.getElementById("user_id").innerText = logData.user_id || "Not available";
+        document.getElementById("final_answer").innerText = logData.final_answer || "Not available";
+        document.getElementById("logviewer").addEventListener("click", () => {
+            window.location.href = "/api/v1/logviewer"; 
+        });
+
+        // Collapsible metadata section
+        const metadataSection = document.getElementById("nodeMetadataSection");
+        const toggleMetadataHeader = document.getElementById("toggleMetadata");
+        const toggleIcon = document.getElementById("toggleIcon");
+
+        toggleMetadataHeader.addEventListener("click", () => {
+            const isCollapsed = metadataSection.classList.toggle("collapsed");
+            toggleIcon.textContent = isCollapsed ? "▶" : "▼";
+        });
+
+        // Graph setup
+        const nodes = logData.data.map(task => ({
+            id: task.task_id,
+            name: task.name,
+            observation: task.observation || "No observations"
+        }));
+
+        const links = [];
+        logData.data.forEach(task => {
+            if (task.dependencies && task.dependencies.length > 0) {
+                task.dependencies.forEach(dep => {
+                    links.push({
+                        source: dep,
+                        target: task.task_id
+                    });
+                });
+            }
+        });
+
+        const width = document.querySelector('.left-panel').offsetWidth;
+        const height = document.querySelector('.left-panel').offsetHeight;
+
+        const zoom = d3.zoom()
+            .scaleExtent([0.5, 3])
+            .on("zoom", event => svg.attr("transform", event.transform));
+
+        const svg = d3.select("#graph")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .call(zoom)
+            .append("g");
+
+        const defaultScale = 2.5;
+        const defaultTranslateX = width / 2;
+        const defaultTranslateY = height / 2;
+
+        svg.attr("transform", `translate(${defaultTranslateX}, ${defaultTranslateY}) scale(${defaultScale})`);
+
+        d3.select("#graph svg")
+            .call(zoom.transform, d3.zoomIdentity.translate(defaultTranslateX, defaultTranslateY).scale(defaultScale));
+
+        svg.append("defs").append("marker")
+            .attr("id", "arrowhead")
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", 15)
+            .attr("refY", 0)
+            .attr("orient", "auto")
+            .attr("markerWidth", 8)
+            .attr("markerHeight", 8)
+            .append("path")
+            .attr("d", "M0,-5L10,0L0,5")
+            .attr("fill", "#999");
+
+        const simulation = d3.forceSimulation(nodes)
+            .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+            .force("charge", d3.forceManyBody().strength(-200))
+            .force("center", d3.forceCenter(0, 0))
+            .force("collision", d3.forceCollide().radius(50));
+
+        const link = svg.selectAll(".edge")
+            .data(links)
+            .enter().append("line")
+            .attr("class", "edge");
+
+        const nodeMetadata = document.getElementById("node_metadata");
+
+        const node = svg.selectAll(".node")
+            .data(nodes)
+            .enter().append("circle")
+            .attr("class", "node")
+            .attr("r", 10)
+            .on("mouseover", function(event, d) {
+                d3.select(this).classed("highlighted", true);
+                d3.selectAll(".edge")
+                    .filter(link => link.source.id === d.id || link.target.id === d.id)
+                    .classed("highlighted", true);
+            })
+            .on("mouseout", function() {
+                d3.select(this).classed("highlighted", false);
+                d3.selectAll(".edge").classed("highlighted", false);
+            })
+            .on("click", function(event, d) {
+                d3.selectAll(".node").classed("highlighted", false);
+                d3.select(this).classed("highlighted", true);
+
+                const observation = typeof d.observation === "object"
+                    ? JSON.stringify(d.observation, null, 2).replace(/\n/g, "<br>")
+                    : d.observation.replace(/\n/g, "<br>");
+
+                nodeMetadata.innerHTML = `
+                    <strong>Task Name:</strong> ${d.name} <br>
+                    <strong>Task ID:</strong> ${d.id} <br>
+                    <strong>Observation:</strong> ${observation}
+                `;
+            });
+
+        const labels = svg.selectAll(".label")
+            .data(nodes)
+            .enter().append("text")
+            .attr("class", "label")
+            .attr("text-anchor", "middle")
+            .text(d => d.name);
+
+        simulation.nodes(nodes).on("tick", ticked);
+        simulation.force("link").links(links);
+
+        document.getElementById("resetZoom").addEventListener("click", () => {
+            d3.select("#graph svg")
+                .transition()
+                .duration(500)
+                .call(zoom.transform, d3.zoomIdentity.translate(defaultTranslateX, defaultTranslateY).scale(defaultScale));
+        });
+
+        function ticked() {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            node
+                .attr("cx", d => d.x)
+                .attr("cy", d => d.y);
+
+            labels
+                .attr("x", d => d.x)
+                .attr("y", d => d.y - 15);
+        }
+    </script>
+</body>
+
+</html>

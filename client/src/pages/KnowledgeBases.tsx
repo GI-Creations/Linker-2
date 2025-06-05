@@ -61,7 +61,7 @@ const KnowledgeBases = () => {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h1 className="text-3xl font-bold text-[#1677FF] mb-2">Knowledge Bases</h1>
+                <h1 className="text-3xl  text-[#1677FF] mb-2">Knowledge Bases</h1>
                 <p className="text-gray-600">Manage your documents and knowledge repositories</p>
               </div>
 
@@ -109,7 +109,7 @@ const KnowledgeBases = () => {
                       <Database className="w-5 h-5 text-blue-600" />
                     </div> */}
                     <div>
-                      <h3 className="font-semibold text-gray-900">{kb.name}</h3>
+                      <h3 className="text-gray-900">{kb.name}</h3>
                       {/* <Badge 
                         variant={kb.status === 'active' ? 'default' : 'secondary'}
                         className="bg-blue-50 text-[#1677FF] hover:bg-blue-50 hover:text-[#1677FF]"
@@ -153,7 +153,7 @@ const KnowledgeBases = () => {
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Database className="w-8 h-8 text-gray-400" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No knowledge bases found</h3>
+              <h3 className="text-lg  text-gray-900 mb-2">No knowledge bases found</h3>
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
                 {searchQuery ? 'Try adjusting your search criteria' : 'Create your first knowledge base to store and organize documents'}
               </p>

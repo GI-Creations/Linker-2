@@ -1,0 +1,30 @@
+{
+    "ChatCohere": {
+        "api_key_name": "COHERE_API_KEY",
+        "models": [
+            "command-r"
+        ]
+    },
+    "ChatGoogleGenerativeAI": {
+        "api_key_name": "GOOGLE_API_KEY",
+        "models": [
+            "gemini-pro"
+        ]
+    },
+    "ChatAnthropic": {
+        "api_key_name": "ANTHROPIC_API_KEY",
+        "models": [
+            "claude-3-5-sonnet-20241022"
+        ]
+    },
+    "AzureChatOpenAI": {
+        "api_key_name": "AzureOpenAI_API_KEY",
+        "models": [
+            "chad-gpt"
+        ],
+        "openai_api_version": "2024-05-01-preview",
+        "openai_api_base": "https://fun-app-instance.openai.azure.com/",
+        "openai_api_type": "Azure",
+        "deployment_name": "chad-gpt"
+    }
+}

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic JSON Config Updater</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e9ecef;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-around; /* Space between forms */
+            width: 100%;
+            max-width: 900px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .form-container {
+            width: 45%; /* Adjusted to take up half of the container */
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* Gap between forms */
+        }
+
+        h1 {
+            text-align: center;
+            color: #343a40;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        form {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Gap between form groups */
+        }
+
+        label {
+            font-size: 1em;
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+
+        input[type="number"],
+        input[type="text"],
+        select,
+        input[type="range"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        select:focus,
+        input[type="range"]:focus {
+            border-color: #80bdff;
+            outline: none;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Style for toggle switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 24px;
+            margin-top: 10px;
+        }
+
+        .switch input {
+            display: none;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #4CAF50;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(16px);
+        }
+
+        /* Additional styles for temperature input */
+        .range-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .range-label span {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+
+        select:focus {
+            border-color: #80bdff;
+            outline: none;
+            background-color: #e9ecef;
+        }
+
+        select option {
+            padding: 10px;
+            font-size: 1em;
+        }
+
+        table {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 800px;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #28a745;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <script>
+        const llmOptions = {{ llm_options|tojson }};
+
+        function updateModelDropdown(agent) {
+            const llmSelect = document.getElementById(`${agent}_llm`);
+            const modelSelect = document.getElementById(`${agent}_model`);
+            const selectedLlm = llmSelect.value;
+
+            // Clear the current model options
+            modelSelect.innerHTML = '';
+
+            // Populate new model options based on the selected LLM
+            const models = llmOptions[selectedLlm].models;
+            models.forEach(model => {
+                const option = document.createElement('option');
+                option.value = model;
+                option.textContent = model;
+                modelSelect.appendChild(option);
+            });
+        }
+    </script>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="form-container">
+            <form method="post" action="/api/v1/update_general">
+                <h1>Dynamic Configuration Updater</h1>
+                {% for key, config in data.items() %}
+                <div class="form-group">
+                    <label for="{{ key }}">{{ key.replace('_', ' ').capitalize() }}:</label>
+                    {% if config.type == 'switch' %}
+                    <label class="switch">
+                        <input type="checkbox" id="{{ key }}" name="{{ key }}" {% if config.value %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                    {% elif config.type == 'slider' %}
+                    <input type="range" id="{{ key }}" name="{{ key }}" min="0" max="1" step="0.01" value="{{ config.value }}" 
+                        oninput="document.getElementById('{{ key }}_value').textContent = this.value;" />
+                    <span id="{{ key }}_value">{{ config.value }}</span>
+                    {% elif config.type == 'dropdown' %}
+                    <select id="{{ key }}" name="{{ key }}">
+                        {% for option in config.options %}
+                        <option value="{{ option }}" {% if option == config.value %}selected{% endif %}>{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    {% else %}
+                    <input type="number" id="{{ key }}" name="{{ key }}" value="{{ config.value }}" step="any">
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <button type="submit">Update</button>
+            </form>
+        </div>
+
+        <div class="form-container">
+            <form method="post" action="/api/v1/update_llm">
+                <h1>LLM Configuration Updater</h1>
+                {% for agent, config in llm_data.items() %}
+                <div class="form-group">
+                    <label for="{{ agent }}_llm">{{ agent.capitalize() }} LLM:</label>
+                    <select id="{{ agent }}_llm" name="{{ agent }}_llm" onchange="updateModelDropdown('{{ agent }}')">
+                        {% for llm, llm_info in llm_options.items() %}
+                        <option value="{{ llm }}" {% if config.llm==llm %}selected{% endif %}>{{ llm }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="{{ agent }}_model">{{ agent.capitalize() }} Model:</label>
+                    <select id="{{ agent }}_model" name="{{ agent }}_model">
+                        {% for model in llm_options[config.llm]['models'] %}
+                        <option value="{{ model }}" {% if config.model==model %}selected{% endif %}>{{ model }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="{{ agent }}_temperature">{{ agent.capitalize() }} Temperature:</label>
+                    <div class="range-label">
+                        <input type="range" id="{{ agent }}_temperature" name="{{ agent }}_temperature" min="0" max="1"
+                            step="0.01" value="{{ config.temperature }}" oninput="document.getElementById('{{ agent }}_temperature_value').textContent = this.value;" />
+                        <span id="{{ agent }}_temperature_value">{{ config.temperature }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+                <button type="submit">Update LLM Config</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>
