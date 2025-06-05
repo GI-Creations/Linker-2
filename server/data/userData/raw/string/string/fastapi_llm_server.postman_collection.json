@@ -1,0 +1,82 @@
+{
+  "info": {
+    "name": "FastAPI LLM Server",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8000/api/v1/",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Query QA Chain",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"ticker\": \"AAPL\",\n  \"user_id\": \"user123\",\n  \"history\": [\n    {\n      \"label\": \"question\",\n      \"content\": \"What is revenue?\",\n      \"chatId\": \"1\"\n    }\n  ],\n  \"query\": \"What is the revenue?\",\n  \"mentioned_companies\": [\n    \"Apple\"\n  ]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/v1/query",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Planning Tasks",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"ticker\": \"AAPL\",\n  \"user_id\": \"user123\",\n  \"history\": [\n    {\n      \"label\": \"question\",\n      \"content\": \"List tasks\",\n      \"chatId\": \"1\"\n    }\n  ],\n  \"query\": \"Show me tasks\",\n  \"mentioned_companies\": [\n    \"Apple\"\n  ]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/v1/getTasks",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "getTasks"
+          ]
+        }
+      }
+    }
+  ]
+}

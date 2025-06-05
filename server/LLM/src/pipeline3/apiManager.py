@@ -14,16 +14,25 @@ class ApiManager:
         for key, value in os.environ.items():
             if "_" in key and key.endswith(tuple("1234567890")):
                 parts = key.split('_')
-                if len(parts) >= 5:
-                    prefix = '_'.join(parts[:-3])
-                    limit = int(parts[-3])
-                    period = int(parts[-2])
-                    
-                    if prefix not in self.api_keys:
-                        self.api_keys[prefix] = []
-                        self.api_usage[prefix] = {}
-                    self.api_keys[prefix].append((value, limit, period))
-                    self.api_usage[prefix][value] = {'count': 0, 'expiry': None, 'limit': limit, 'period': period}
+                try:
+                    if len(parts) >= 5:
+                        # Skip if the parts can't be converted to integers
+                        try:
+                            limit = int(parts[-3])
+                            period = int(parts[-2])
+                        except ValueError:
+                            continue
+                            
+                        prefix = '_'.join(parts[:-3])
+                        
+                        if prefix not in self.api_keys:
+                            self.api_keys[prefix] = []
+                            self.api_usage[prefix] = {}
+                        self.api_keys[prefix].append((value, limit, period))
+                        self.api_usage[prefix][value] = {'count': 0, 'expiry': None, 'limit': limit, 'period': period}
+                except Exception as e:
+                    print(f"Warning: Could not parse API key {key}: {e}")
+                    continue
 
     def _reset_key(self, service, key):
         self.api_usage[service][key] = {'count': 0, 'expiry': None, 'limit': self.api_usage[service][key]['limit'], 'period': self.api_usage[service][key]['period']}
