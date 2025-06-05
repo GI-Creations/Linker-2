@@ -57,7 +57,7 @@ const AgentCard = ({ agent }: AgentCardProps) => {
       onClick={handleAgentClick}
     >
       <div className="mb-4">
-        <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+        <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-[#1677FF] transition-colors">
           {agent.name}
         </h3>
         <p className="text-sm text-gray-600 leading-relaxed">
@@ -70,7 +70,7 @@ const AgentCard = ({ agent }: AgentCardProps) => {
           {toolsArray.slice(0, 3).map((tool, index) => (
             <div
               key={index}
-              className="w-6 h-6 rounded bg-gray-100 flex items-center justify-center text-xs"
+              className="w-6 h-6 rounded bg-gray-100 flex items-center justify-center "
               title={tool}
             >
               {getIntegrationIcon(tool.toLowerCase())}
