@@ -128,7 +128,7 @@ const Tools = () => {
                   {category.tools.map((tool) => (
                     <div key={tool.name} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-all duration-200 card-hover">
                       <div className="flex flex-col items-start gap-3 mb-3">
-                        <span className="text-2xl">{tool.icon}</span>
+                        <span className="text-4xl">{tool.icon}</span>
                         <h4 className=" text-gray-800">{tool.name}</h4>
                       </div>
                       <p className="text-sm text-gray-600 mb-2 line-clamp-2">{tool.description}</p>
