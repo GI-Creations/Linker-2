@@ -37,7 +37,7 @@ const Sidebar = () => {
           return (
             <div
               key={index}
-              className={`text-[13px] flex items-center gap-4 px-5 py-4 rounded-xl cursor-pointer transition-all duration-200 text-lg font-medium shadow-sm ${isActive
+              className={`text-[12px] flex items-center gap-4 px-5 py-4 rounded-xl cursor-pointer transition-all duration-200 text-lg font-medium shadow-sm ${isActive
                 ? 'bg-[#1677FF] text-white'
                 : 'text-white hover:text-[#1677FF]'
                 }`}
