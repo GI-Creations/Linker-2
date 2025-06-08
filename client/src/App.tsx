@@ -33,7 +33,7 @@ const AppContent = () => {
         <Route path="/chat" element={<Dial />} />
         <Route path="/" element={<Dial />} />
         <Route path="/knowledge-bases" element={<KnowledgeBases />} />
-        <Route path="/knowledge-base/:id" element={<KnowledgeBaseDetail />} />
+        <Route path="/knowledge-bases/:id" element={<KnowledgeBaseDetail />} />
         <Route path="/tools" element={<Tools />} />
         <Route path="/agents" element={<Index />} />
         <Route path="*" element={<NotFound />} />

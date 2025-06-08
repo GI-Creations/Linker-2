@@ -6,44 +6,37 @@ import ChatHistorySidebar from '@/components/ChatHistorySidebar';
 import ChatMessage from '@/components/ChatMessage';
 import ChatInput from '@/components/ChatInput';
 import WelcomeScreen from '@/components/WelcomeScreen';
-import { suggestions as actions } from '@/data/chatData';
 import Sidebar from '@/components/Sidebar';
+import { chatService, ChatThread, Suggestion } from '../services/chatService';
 
 function Dial() {
-  interface ChatThread {
-    id: string;
-    title: string;
-    lastMessage: string;
-    time: string;
-    messages: {
-      id: string;
-      text: string;
-      timestamp: Date;
-      isUser: boolean;
-    }[];
-  }
-
-  const STORAGE_KEY = 'linker_chat_threads';
   const [threads, setThreads] = useState<ChatThread[]>([]);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // Load threads from localStorage on mount
+  // Load threads and suggestions from API on mount
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      setThreads(JSON.parse(saved));
-    }
+    const loadData = async () => {
+      try {
+        const [fetchedThreads, fetchedSuggestions] = await Promise.all([
+          chatService.getThreads(),
+          chatService.getSuggestions()
+        ]);
+        setThreads(fetchedThreads);
+        setSuggestions(fetchedSuggestions);
+      } catch (error) {
+        console.error('Error loading data:', error);
+        setThreads([]);
+        setSuggestions([]);
+      }
+    };
+    loadData();
   }, []);
-
-  // Save threads to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(threads));
-  }, [threads]);
 
   // Handle pending chat query from global new chat
   useEffect(() => {
@@ -70,75 +63,105 @@ function Dial() {
   }, [threads, query]);
 
   // Start a new thread (with optional initial message)
-  const handleStartThread = useCallback((action?: any) => {
-    const newId = `thread-${Date.now()}`;
-    const now = new Date();
-    const title = action?.text ? action.text.slice(0, 24) : 'New Chat';
-    const newThread = {
-      id: newId,
-      title,
-      lastMessage: action?.text || '',
-      time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      messages: action?.text ? [{ id: `msg-${Date.now()}`, text: action.text, timestamp: now, isUser: true }] : []
-    };
-    setThreads(prev => [newThread, ...prev]);
-    setActiveThreadId(newId);
-    setInput('');
-    
-    // If starting with a message, simulate AI response
-    if (action?.text) {
-      setTimeout(() => {
-        handleAIResponse(newId, action.text);
-      }, 1000);
+  const handleStartThread = useCallback(async (action?: any) => {
+    setLoading(true);
+    try {
+      const newThread = await chatService.createThread(action?.text);
+      if (newThread) {
+        setThreads(prev => [newThread, ...prev]);
+        setActiveThreadId(newThread.id);
+        setInput('');
+        setTimeout(() => inputRef.current?.focus(), 100);
+      }
+    } catch (error) {
+      console.error('Error creating thread:', error);
+    } finally {
+      setLoading(false);
     }
-    
-    setTimeout(() => inputRef.current?.focus(), 100);
-  }, []);
-
-  // Handle AI response simulation
-  const handleAIResponse = useCallback((threadId: string, userMessage: string) => {
-    const aiResponse = 'Thank you for your message. How can I assist you further?';
-    setThreads(prev => prev.map(t =>
-      t.id === threadId
-        ? {
-          ...t,
-          messages: [
-            ...t.messages,
-            { id: `msg-${Date.now()}`, text: aiResponse, timestamp: new Date(), isUser: false }
-          ],
-          lastMessage: aiResponse,
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
-        : t
-    ));
-    setLoading(false);
   }, []);
 
   // Send a message in current thread
-  const handleSendMessage = useCallback(() => {
+  const handleSendMessage = useCallback(async () => {
     if (!input.trim() || !currentThread) return;
     setLoading(true);
-    const now = new Date();
+    
+    // Add user message immediately
+    const userMessage = {
+      id: `msg-${Date.now()}`,
+      text: input,
+      timestamp: new Date().toISOString(),
+      isUser: true
+    };
+    
     setThreads(prev => prev.map(t =>
-      t.id === currentThread.id
+      t.id === currentThread.id 
         ? {
-          ...t,
-          messages: [
-            ...t.messages,
-            { id: `msg-${Date.now()}`, text: input, timestamp: now, isUser: true }
-          ],
-          lastMessage: input,
-          time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
+            ...t,
+            messages: [...t.messages, userMessage],
+            lastMessage: input,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }
         : t
     ));
+    
+    const currentInput = input;
     setInput('');
-
-    // Simulate AI response
-    setTimeout(() => {
-      handleAIResponse(currentThread.id, input);
-    }, 1000);
-  }, [input, currentThread, handleAIResponse]);
+    
+    try {
+      const response = await chatService.sendMessage(
+        currentThread.id,
+        currentInput,
+        currentThread.messages.map(m => ({
+          label: m.isUser ? 'user' : 'ai',
+          content: m.text,
+          chatId: currentThread.id
+        }))
+      );
+      
+      if (response) {
+        // Add AI response
+        const aiMessage = {
+          id: `msg-${Date.now()}-ai`,
+          text: response,
+          timestamp: new Date().toISOString(),
+          isUser: false
+        };
+        
+        setThreads(prev => prev.map(t =>
+          t.id === currentThread.id 
+            ? {
+                ...t,
+                messages: [...t.messages, aiMessage],
+                lastMessage: response,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              }
+            : t
+        ));
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      // Add error message
+      const errorMessage = {
+        id: `error-${Date.now()}`,
+        text: "I apologize, but I'm having trouble generating a response right now. Please try again.",
+        timestamp: new Date().toISOString(),
+        isUser: false
+      };
+      
+      setThreads(prev => prev.map(t =>
+        t.id === currentThread.id 
+          ? {
+              ...t,
+              messages: [...t.messages, errorMessage],
+              lastMessage: errorMessage.text,
+              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            }
+          : t
+      ));
+    } finally {
+      setLoading(false);
+    }
+  }, [input, currentThread]);
 
   // Reset to welcome screen
   const handleNewChat = useCallback(() => {
@@ -174,20 +197,12 @@ function Dial() {
                     </button>
                   </div>
                 </div>
-                {/* <div className="mt-3">
-                  <SearchBox
-                    placeholder="Search conversations..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    className="w-full"
-                  />
-                </div> */}
               </header>
               <ChatHistorySidebar
                 isVisible={isSidebarVisible}
                 onToggle={() => setIsSidebarVisible(false)}
                 activeThreadId={activeThreadId}
-                chatHistory={filteredThreads.map(thread => ({
+                threads={filteredThreads.map(thread => ({
                   id: thread.id,
                   title: thread.title,
                   lastMessage: thread.lastMessage,
@@ -261,9 +276,6 @@ function Dial() {
                         handleSendMessage();
                       }
                     }}
-                    showMentions={false}
-                    filteredMentions={[]}
-                    onMentionClick={() => { }}
                     isLoading={loading}
                   />
                 </footer>
@@ -271,7 +283,7 @@ function Dial() {
             ) : (
               /* Welcome Screen */
               <WelcomeScreen
-                suggestions={actions}
+                suggestions={suggestions}
                 onSuggestionClick={handleStartThread}
                 onUserMessage={msg => handleStartThread({ text: msg })}
               />

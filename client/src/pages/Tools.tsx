@@ -78,7 +78,7 @@ const Tools = () => {
             <div className="flex items-center justify-between mb-6">
               <div>
 
-                <h1 className="text-3xl  text-[#1677FF] mb-2">Connect 200+ tools to AI Agents using Linker</h1>
+                <h1 className="text-3xl  text-[#1677FF] mb-2">Tools</h1>
                 <p className="text-gray-600">Select one of the below templates and deploy your AI Agent in {"<"}5 minutes using Linker</p>
               </div>
 

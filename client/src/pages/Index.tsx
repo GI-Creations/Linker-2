@@ -23,13 +23,13 @@ const Index = () => {
     { id: '8', name: 'Deep Research on Investors', description: 'Look up investor info before meetings.', status: 'popular' as const, tools: ['Web', 'Notion'], lastActive: '', tasksCompleted: 0, category: 'Fundraising & VC' },
     { id: '9', name: 'Failed Payment Prevention', description: 'Identify failed payments and help recover revenue with follow-ups', status: 'popular' as const, tools: ['Stripe'], lastActive: '', tasksCompleted: 0, category: 'Sales' },
   ];
-  const [selectedTab, setSelectedTab] = useState<'Your agents' | 'Templates'>('Templates');
+  const [selectedTab, setSelectedTab] = useState<'Your agents' | 'Linker Agents'>('Linker Agents');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const displayedAgents = (selectedTab === 'Your agents' ? yourAgents : templateAgents)
     .filter(a => {
       const matchesName = a.name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = selectedTab !== 'Templates'
+        const matchesCategory = selectedTab !== 'Linker Agents'
         || selectedCategory === 'All'
         || ('category' in a && (a as any).category === selectedCategory);
       return matchesName && matchesCategory;
@@ -58,7 +58,7 @@ const Index = () => {
             </div>
             {/* Tabs */}
             <div className="flex items-center gap-4 mb-4">
-              {['Your agents', 'Templates'].map(tab => (
+              {['Your agents', 'Linker Agents'].map(tab => (
                 <button key={tab}
                   onClick={() => setSelectedTab(tab as any)}
                   className={`px-4 py-1 rounded-full ${selectedTab === tab ? 'btn-secondary' : 'btn-tertiary'}`}
@@ -70,11 +70,11 @@ const Index = () => {
             <div className="relative  max-w-md mb-4">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
               <Input
-                type="text" placeholder={`Search ${selectedTab.toLowerCase()}`} value={searchTerm}
+                type="text" placeholder={`Search ${selectedTab === 'Your agents' ? 'your agents' : 'Linker Agents'}`} value={searchTerm}
                 className="pl-12 pr-4 py-6 rounded-full border  bg-white shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200 text-base"
                 onChange={e => setSearchTerm(e.target.value)} />
             </div>
-            {selectedTab === 'Templates' && (
+              {selectedTab === 'Linker Agents' && (
               <div className="flex items-center justify-between mb-6">
                 <div className="flex space-x-3 overflow-x-auto">
                   {['All', 'Personal', 'Marketing', 'Sales', 'Customer support', 'Company', 'Product', 'Engineering', 'Fundraising & VC', 'YC'].map(cat => (
@@ -108,12 +108,12 @@ const Index = () => {
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
                 Create your first AI agent to automate tasks and workflows
               </p>
-              <AddAgentDialog>
+              {/* <AddAgentDialog>
                 <Button className="btn-primary">
                   <Plus className="w-4 h-4 mr-2" />
                   Create Your First Agent
                 </Button>
-              </AddAgentDialog>
+              </AddAgentDialog> */}
             </div>
           )}
         </main>

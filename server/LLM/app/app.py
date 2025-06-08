@@ -126,12 +126,10 @@ def create_tables():
 # Call this function at the start of your application
 create_tables()
 
-# Allow all CORS origins
-origins = ["*"]
-
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["http://localhost:3000"],  # Frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

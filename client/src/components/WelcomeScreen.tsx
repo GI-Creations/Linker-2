@@ -6,7 +6,7 @@ import { useState } from 'react';
 interface Suggestion {
   id: string;
   text: string;
-  category: 'suggested';
+  category: string;
 }
 
 interface WelcomeScreenProps {
