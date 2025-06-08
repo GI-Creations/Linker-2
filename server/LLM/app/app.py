@@ -20,7 +20,9 @@ import asyncio
 import aiofiles
 from typing import List, Optional, Dict, Any
 
-sys.path.append("../")
+# Add the parent directory to Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from src.pipeline3.chain_run import QAGraph
 from src.pipeline3.apiManager import ApiManager
 from src.components.CreateDatabase import vectorize
@@ -129,7 +131,11 @@ create_tables()
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Frontend URL
+    allow_origins=[
+        "http://localhost:3000",  # Local development
+        "https://linker-2-smoky.vercel.app",  # Vercel frontend
+        "https://linker-2.vercel.app"  # Alternative Vercel domain
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

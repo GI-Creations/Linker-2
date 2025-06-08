@@ -8,7 +8,7 @@ import Sidebar from '@/components/Sidebar';
 import axios from 'axios';
 
 // API base URL
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://backend-app-6uva.onrender.com';
 
 // Document interface
 interface Document {
