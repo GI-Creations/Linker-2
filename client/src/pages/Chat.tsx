@@ -82,16 +82,70 @@ function Chat() {
   }, []);
 
   // Start a new thread
-  const handleStartThread = useCallback(async (ticker: string = 'AAPL') => {
+  const handleStartThread = useCallback(async (query: string = '') => {
     try {
       setLoading(true);
+      const ticker = query || 'AAPL'; // Use query as ticker or default to 'AAPL'
       const newThread = await chatService.createThread(ticker, userId);
       setThreads(prev => [newThread, ...prev]);
       setActiveThreadId(newThread.id);
+      
+      // If there's a query, send it immediately
+      if (query) {
+        const userMessage: Message = {
+          id: `msg-${Date.now()}`,
+          text: query,
+          timestamp: new Date().toISOString(),
+          isUser: true
+        };
+        
+        // Add user message to thread
+        setThreads(prev => prev.map(t =>
+          t.id === newThread.id
+            ? {
+                ...t,
+                messages: [...t.messages, userMessage],
+                lastMessage: query,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              }
+            : t
+        ));
+
+        // Get AI response
+        const aiResponse = await chatService.sendMessage(
+          newThread.id,
+          query,
+          [],
+          ticker,
+          userId,
+          []
+        );
+
+        // Add AI response to thread
+        const aiMessage: Message = {
+          id: `msg-${Date.now()}-ai`,
+          text: aiResponse || "I apologize, but I'm having trouble generating a response right now. Please try again.",
+          timestamp: new Date().toISOString(),
+          isUser: false
+        };
+
+        setThreads(prev => prev.map(t =>
+          t.id === newThread.id
+            ? {
+                ...t,
+                messages: [...t.messages, aiMessage],
+                lastMessage: aiMessage.text,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              }
+            : t
+        ));
+      }
+
       setInput('');
       setTimeout(() => inputRef.current?.focus(), 100);
     } catch (error) {
       console.error('Error creating thread:', error);
+    } finally {
       setLoading(false);
     }
   }, [userId]);
@@ -260,13 +314,7 @@ function Chat() {
           ) : (
             <WelcomeScreen
               suggestions={suggestions}
-              onStartChat={(ticker) => {
-                if (typeof ticker === 'string') {
-                  handleStartThread(ticker);
-                } else {
-                  handleStartThread();
-                }
-              }}
+              onStartChat={handleStartThread}
             />
           )}
         </section>

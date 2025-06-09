@@ -267,16 +267,10 @@ function Dial() {
                 {/* Chat Input */}
                 <footer className="border-t border-gray-200/60 bg-white/80 backdrop-blur-sm">
                   <ChatInput
-                    message={input}
-                    onMessageChange={(e) => setInput(e.target.value)}
-                    onSendMessage={handleSendMessage}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        handleSendMessage();
-                      }
-                    }}
-                    isLoading={loading}
+                    value={input}
+                    onChange={setInput}
+                    onSend={handleSendMessage}
+                    loading={loading}
                   />
                 </footer>
               </>
@@ -284,8 +278,7 @@ function Dial() {
               /* Welcome Screen */
               <WelcomeScreen
                 suggestions={suggestions}
-                onSuggestionClick={handleStartThread}
-                onUserMessage={msg => handleStartThread({ text: msg })}
+                onStartChat={handleStartThread}
               />
             )}
           </section>

@@ -38,25 +38,31 @@ class ComposioActionFinderTool:
 
     def get_tool(self):
         """Create and return a StructuredTool for this integration."""
-        apps = self.composio_tool_set.get_apps()
-        app_names = [app.name for app in apps]
-        # actions = self.client.actions.get(limit=100)
-        # print("ACTIONS:",actions)
-        # action_names = [action.name for action in actions]
-        # print("ACTION NAMES:",action_names)
-        action_finder_tool = StructuredTool.from_function(
-            func=self.execute_action,
-            name="action_finder", 
-            description=(
-                "action_finder(userQuery: str, app:str) -> dict:\n"
-                " - Finds the most appropriate actions for userQuery.\n"
-                " - Example usage:\n"
-                "   action_finder(USER_QUERY, APP)\n"
-                " - Always choose the best APP from the list of app names: \n"+str(app_names)+"\n" 
-                " - Returns a list of enums response with action results.\n"
-                " - Always use before ComposioTool for getting the action to execute and invoke ComposioTool after this always.\n"
-                " - Use for Applications operations when needed, avoid otherwise."
-            ),
-            args_schema=ComposioActionFinderInput,
-        )
-        return action_finder_tool
+        try:
+            apps = self.composio_tool_set.get_apps()
+            app_names = [app.name for app in apps]
+            action_finder_tool = StructuredTool.from_function(
+                func=self.execute_action,
+                name="action_finder", 
+                description=(
+                    "action_finder(userQuery: str, app:str) -> dict:\n"
+                    " - Finds the most appropriate actions for userQuery.\n"
+                    " - Example usage:\n"
+                    "   action_finder(USER_QUERY, APP)\n"
+                    " - Always choose the best APP from the list of app names: \n"+str(app_names)+"\n" 
+                    " - Returns a list of enums response with action results.\n"
+                    " - Always use before ComposioTool for getting the action to execute and invoke ComposioTool after this always.\n"
+                    " - Use for Applications operations when needed, avoid otherwise."
+                ),
+                args_schema=ComposioActionFinderInput,
+            )
+            return action_finder_tool
+        except Exception as e:
+            print(f"Error initializing Composio tool: {str(e)}")
+            # Return a fallback tool that handles the error gracefully
+            return StructuredTool.from_function(
+                func=lambda userQuery, app: f"Error initializing Composio: {str(e)}",
+                name="action_finder",
+                description="Fallback action finder due to initialization error",
+                args_schema=ComposioActionFinderInput,
+            )
