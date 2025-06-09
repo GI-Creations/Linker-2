@@ -1,5 +1,5 @@
 import { Bot, Sparkles, Zap, Brain, Target } from 'lucide-react';
-import { Button } from './ui/button';
+import { Button } from './ui/Button';
 import ChatInput from './ChatInput';
 import { useState } from 'react';
 

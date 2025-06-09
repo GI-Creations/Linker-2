@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  server:
+    build:
+      context: ./server/LLM
+    container_name: linker-server
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./server/LLM:/app
+    restart: unless-stopped
+
+  client:
+    build:
+      context: ./client
+    container_name: linker-client
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_BASE_URL=http://server:8000
+    depends_on:
+      - server
+    volumes:
+      - ./client:/app
+    restart: unless-stopped

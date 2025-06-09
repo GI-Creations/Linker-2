@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { Search as Magnifier, Plus as NewIcon, MessageCircle as BubbleIcon } from 'lucide-react';
 import { Input as SearchBox } from '@/components/ui/input';
-import { Button as IconBtn } from '@/components/ui/button';
+import { Button as IconBtn } from '@/components/ui/Button';
 import ChatHistorySidebar from '@/components/ChatHistorySidebar';
 import ChatMessage from '@/components/ChatMessage';
 import ChatInput from '@/components/ChatInput';

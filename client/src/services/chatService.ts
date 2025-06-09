@@ -141,14 +141,16 @@ class ChatService {
     }
   }
 
-  async createThread(ticker: string = 'AAPL', user_id: string = 'user1'): Promise<ChatThread> {
+  async createThread(title: string, user_id: string = 'user1'): Promise<ChatThread> {
+    // Use the user's query or a default
+    const threadTitle = title && title.trim() ? title.trim() : 'New Chat';
     return {
-      id: ticker,
-      title: ticker,
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      title: threadTitle,
       lastMessage: '',
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       messages: [],
-      ticker,
+      ticker: threadTitle,
       user_id
     };
   }
