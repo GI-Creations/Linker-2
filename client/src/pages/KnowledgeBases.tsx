@@ -16,7 +16,7 @@ import Sidebar from '@/components/Sidebar';
 import axios from 'axios';
 
 // API base URL
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000';
 
 // Format file size to human readable format
 const formatFileSize = (bytes: number): string => {
