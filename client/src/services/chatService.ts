@@ -1,7 +1,7 @@
 import axios from 'axios';
+import { suggestions } from '../data/chatData';
 
-const API_BASE_URL = 'http://localhost:5000/api/chat';
-const QUERY_API_URL = 'http://localhost:8000/api/v1/query';
+const API_BASE_URL = 'http://localhost:8000/api/v1';
 
 export interface Message {
   id: string;
@@ -16,6 +16,8 @@ export interface ChatThread {
   lastMessage: string;
   time: string;
   messages: Message[];
+  ticker: string;
+  user_id: string;
 }
 
 export interface Suggestion {
@@ -30,6 +32,14 @@ export interface HistoryItem {
   chatId: string;
 }
 
+export interface ChatResponse {
+  user_id: string;
+  ticker: string;
+  query: string;
+  result: string;
+  timestamp: string;
+}
+
 class ChatService {
   private async handleResponse<T>(response: any): Promise<T> {
     if (response.data) {
@@ -38,43 +48,109 @@ class ChatService {
     throw new Error('Invalid response format');
   }
 
-  async getThreads(): Promise<ChatThread[]> {
+  async getThreads(user_id: string = 'user1'): Promise<ChatThread[]> {
     try {
-      console.log('Fetching threads...');
-      const response = await axios.get(`${API_BASE_URL}/threads`);
-      console.log('Threads response:', response.data);
-      return this.handleResponse<ChatThread[]>(response);
+      console.log('Fetching chat history...');
+      const response = await axios.get(`${API_BASE_URL}/chats`, {
+        params: { user_id }
+      });
+      console.log('Chat history response:', response.data);
+      
+      // Convert chat history to threads format
+      const chats = response.data.chats || [];
+      const threads: ChatThread[] = [];
+      const threadMap = new Map<string, ChatThread>();
+
+      chats.forEach((chat: ChatResponse) => {
+        if (!threadMap.has(chat.ticker)) {
+          threadMap.set(chat.ticker, {
+            id: chat.ticker,
+            title: chat.ticker,
+            lastMessage: chat.result,
+            time: new Date(chat.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            messages: [],
+            ticker: chat.ticker,
+            user_id: chat.user_id
+          });
+        }
+        const thread = threadMap.get(chat.ticker)!;
+        thread.messages.push(
+          {
+            id: `user-${chat.timestamp}`,
+            text: chat.query,
+            timestamp: chat.timestamp,
+            isUser: true
+          },
+          {
+            id: `ai-${chat.timestamp}`,
+            text: chat.result,
+            timestamp: chat.timestamp,
+            isUser: false
+          }
+        );
+      });
+
+      return Array.from(threadMap.values());
     } catch (error) {
-      console.error('Error fetching threads:', error);
+      console.error('Error fetching chat history:', error);
       return [];
     }
   }
 
-  async getThread(threadId: string): Promise<ChatThread | null> {
+  async getThread(threadId: string, user_id: string = 'user1'): Promise<ChatThread | null> {
     try {
       console.log('Fetching thread:', threadId);
-      const response = await axios.get(`${API_BASE_URL}/thread/${threadId}`);
+      const response = await axios.get(`${API_BASE_URL}/chats`, {
+        params: { user_id, ticker: threadId }
+      });
       console.log('Thread response:', response.data);
-      return this.handleResponse<ChatThread>(response);
+      
+      const chats = response.data.chats || [];
+      if (chats.length === 0) return null;
+
+      const messages: Message[] = [];
+      chats.forEach((chat: ChatResponse) => {
+        messages.push(
+          {
+            id: `user-${chat.timestamp}`,
+            text: chat.query,
+            timestamp: chat.timestamp,
+            isUser: true
+          },
+          {
+            id: `ai-${chat.timestamp}`,
+            text: chat.result,
+            timestamp: chat.timestamp,
+            isUser: false
+          }
+        );
+      });
+
+      return {
+        id: threadId,
+        title: threadId,
+        lastMessage: messages[messages.length - 1].text,
+        time: new Date(messages[messages.length - 1].timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        messages,
+        ticker: threadId,
+        user_id
+      };
     } catch (error) {
       console.error('Error fetching thread:', error);
       return null;
     }
   }
 
-  async createThread(initialMessage?: string): Promise<ChatThread | null> {
-    try {
-      console.log('Creating thread with message:', initialMessage);
-      const response = await axios.post(`${API_BASE_URL}/thread`, {
-        initialMessage,
-        title: initialMessage ? initialMessage.slice(0, 24) : 'New Chat'
-      });
-      console.log('Create thread response:', response.data);
-      return this.handleResponse<ChatThread>(response);
-    } catch (error) {
-      console.error('Error creating thread:', error);
-      return null;
-    }
+  async createThread(ticker: string = 'AAPL', user_id: string = 'user1'): Promise<ChatThread> {
+    return {
+      id: ticker,
+      title: ticker,
+      lastMessage: '',
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      messages: [],
+      ticker,
+      user_id
+    };
   }
 
   async sendMessage(
@@ -87,13 +163,23 @@ class ChatService {
   ): Promise<string | null> {
     try {
       console.log('Sending message:', { threadId, message });
-      const response = await axios.post(QUERY_API_URL, {
+      const response = await axios.post(`${API_BASE_URL}/query`, {
         ticker,
         user_id,
         history,
         query: message,
         mentioned_companies,
       });
+
+      // Save the chat to history
+      await axios.post(`${API_BASE_URL}/save_chat`, {
+        ticker,
+        user_id,
+        query: message,
+        result: response.data.result,
+        timestamp: new Date().toISOString()
+      });
+
       if (response.data && response.data.result) {
         return response.data.result;
       }
@@ -108,15 +194,8 @@ class ChatService {
   }
 
   async getSuggestions(): Promise<Suggestion[]> {
-    try {
-      console.log('Fetching suggestions...');
-      const response = await axios.get(`${API_BASE_URL}/suggestions`);
-      console.log('Suggestions response:', response.data);
-      return this.handleResponse<Suggestion[]>(response);
-    } catch (error) {
-      console.error('Error fetching suggestions:', error);
-      return [];
-    }
+    // Return suggestions from chatData.ts
+    return suggestions;
   }
 }
 

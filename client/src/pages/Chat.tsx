@@ -27,13 +27,14 @@ function Chat() {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const userId = 'user1'; // TODO: Get from auth context
 
   // Load threads and suggestions from API on mount
   useEffect(() => {
     const loadData = async () => {
       try {
         const [fetchedThreads, fetchedSuggestions] = await Promise.all([
-          chatService.getThreads(),
+          chatService.getThreads(userId),
           chatService.getSuggestions()
         ]);
         setThreads(fetchedThreads);
@@ -46,7 +47,7 @@ function Chat() {
       }
     };
     loadData();
-  }, []);
+  }, [userId]);
 
   // Find current thread object
   const currentThread = useMemo(() => {
@@ -81,24 +82,19 @@ function Chat() {
   }, []);
 
   // Start a new thread
-  const handleStartThread = useCallback(async (action?: any) => {
+  const handleStartThread = useCallback(async (ticker: string = 'AAPL') => {
     try {
       setLoading(true);
-      const newThread = await chatService.createThread(action?.text);
+      const newThread = await chatService.createThread(ticker, userId);
       setThreads(prev => [newThread, ...prev]);
       setActiveThreadId(newThread.id);
       setInput('');
-
-      if (action?.text) {
-        await handleAIResponse(newThread.id, action.text);
-      }
-
       setTimeout(() => inputRef.current?.focus(), 100);
     } catch (error) {
       console.error('Error creating thread:', error);
       setLoading(false);
     }
-  }, [handleAIResponse]);
+  }, [userId]);
 
   // Send a message in current thread
   const handleSendMessage = useCallback(async () => {
@@ -137,8 +133,8 @@ function Chat() {
         currentThread.id,
         input,
         history,
-        'AAPL',
-        'user1',
+        currentThread.ticker,
+        userId,
         []
       );
       // Always add the AI response as a message, whether it's a success or error message
@@ -180,7 +176,7 @@ function Chat() {
     } finally {
       setLoading(false);
     }
-  }, [input, currentThread]);
+  }, [input, currentThread, userId]);
 
   // Reset to welcome screen
   const handleNewChat = useCallback(() => {
@@ -251,28 +247,26 @@ function Chat() {
                 )}
               </div>
 
-              {/* Chat Input */}
+              {/* Input Area */}
               <footer className="border-t border-gray-200/60 bg-white/80 backdrop-blur-sm">
                 <ChatInput
-                  message={input}
-                  onMessageChange={e => setInput(e.target.value)}
-                  onSendMessage={handleSendMessage}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSendMessage();
-                    }
-                  }}
-                  isLoading={loading}
+                  value={input}
+                  onChange={setInput}
+                  onSend={handleSendMessage}
+                  loading={loading}
                 />
               </footer>
             </>
           ) : (
-            /* Welcome Screen */
             <WelcomeScreen
               suggestions={suggestions}
-              onSuggestionClick={handleStartThread}
-              onUserMessage={msg => handleStartThread({ text: msg })}
+              onStartChat={(ticker) => {
+                if (typeof ticker === 'string') {
+                  handleStartThread(ticker);
+                } else {
+                  handleStartThread();
+                }
+              }}
             />
           )}
         </section>

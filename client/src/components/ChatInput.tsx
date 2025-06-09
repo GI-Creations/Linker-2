@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, forwardRef } from 'react';
 import {
   Send,
   Paperclip,
@@ -23,11 +23,10 @@ interface Mention {
 }
 
 interface ChatInputProps {
-  message: string;
-  onMessageChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  onSendMessage: () => void;
-  onKeyDown?: (e: React.KeyboardEvent) => void;
-  isLoading?: boolean;
+  value: string;
+  onChange: (value: string) => void;
+  onSend: () => void;
+  loading?: boolean;
 }
 
 const apps: Mention[] = [
@@ -43,17 +42,15 @@ const apps: Mention[] = [
   { id: 'web-search', name: 'Web Search', icon: Globe, color: 'text-blue-600' },
 ];
 
-const ChatInput = ({
-  message,
-  onMessageChange,
-  onSendMessage,
-  onKeyDown,
-  isLoading = false
-}: ChatInputProps) => {
+const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(({
+  value,
+  onChange,
+  onSend,
+  loading = false
+}, ref) => {
   const [showMentions, setShowMentions] = useState(false);
   const [filteredMentions, setFilteredMentions] = useState<Mention[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (showMentions) {
@@ -62,10 +59,10 @@ const ChatInput = ({
   }, [filteredMentions, showMentions]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    onMessageChange(e);
+    const newValue = e.target.value;
+    onChange(newValue);
 
-    const lastWord = value.split(/\s+/).pop() || '';
+    const lastWord = newValue.split(/\s+/).pop() || '';
     if (lastWord.startsWith('@')) {
       const query = lastWord.slice(1).toLowerCase();
       const results = apps.filter(app =>
@@ -104,17 +101,22 @@ const ChatInput = ({
       }
     }
 
-    if (onKeyDown) onKeyDown(e);
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (typeof onSend === 'function') {
+        onSend();
+      }
+    }
   };
 
   const handleMentionSelect = (mention: Mention) => {
-    if (!inputRef.current) return;
-    const parts = message.split(/\s+/);
+    if (!ref || !('current' in ref) || !ref.current) return;
+    const parts = value.split(/\s+/);
     parts[parts.length - 1] = `@${mention.name}`;
     const updated = parts.join(' ') + ' ';
-    onMessageChange({ target: { value: updated } } as any);
+    onChange(updated);
     setShowMentions(false);
-    setTimeout(() => inputRef.current?.focus(), 50);
+    setTimeout(() => ref.current?.focus(), 50);
   };
 
   return (
@@ -122,8 +124,8 @@ const ChatInput = ({
       <div className="max-w-4xl mx-auto">
         <div className="relative">
           <textarea
-            ref={inputRef}
-            value={message}
+            ref={ref}
+            value={value}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             placeholder="Type @ to mention agents, knowledge bases, or tools..."
@@ -139,10 +141,10 @@ const ChatInput = ({
             <button
               className="p-2 text-gray-400 hover:text-blue-600 rounded-xl hover:bg-blue-50 hover:shadow-sm"
               onClick={() => {
-                if (inputRef.current) {
-                  inputRef.current.focus();
-                  const newValue = message.trimEnd() + ' @';
-                  onMessageChange({ target: { value: newValue } } as any);
+                if (ref && 'current' in ref && ref.current) {
+                  ref.current.focus();
+                  const newValue = value.trimEnd() + ' @';
+                  onChange(newValue);
                   setShowMentions(true);
                 }
               }}
@@ -153,10 +155,10 @@ const ChatInput = ({
 
           {/* Send Button */}
           <button
-            onClick={onSendMessage}
-            disabled={!message.trim() || isLoading}
+            onClick={onSend}
+            disabled={!value.trim() || loading}
             className={`absolute bottom-4 right-4 p-3 rounded-xl shadow-md transition-all duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed
-              ${!message.trim() || isLoading
+              ${!value.trim() || loading
                 ? 'bg-gray-100 text-gray-400 shadow-gray-200/50'
                 : 'bg-blue-600 text-white shadow-blue-600/25 hover:bg-blue-700 hover:shadow-blue-700/30'
               }`}
@@ -200,6 +202,8 @@ const ChatInput = ({
       </div>
     </div>
   );
-};
+});
+
+ChatInput.displayName = 'ChatInput';
 
 export default ChatInput;

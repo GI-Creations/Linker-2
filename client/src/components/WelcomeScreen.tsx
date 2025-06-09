@@ -11,13 +11,19 @@ interface Suggestion {
 
 interface WelcomeScreenProps {
   suggestions: Suggestion[];
-  onSuggestionClick: (suggestion: Suggestion) => void;
-  onUserMessage?: (text: string) => void;
+  onStartChat: (ticker?: string) => void;
 }
 
-const WelcomeScreen = ({ suggestions, onSuggestionClick, onUserMessage }: WelcomeScreenProps) => {
+const WelcomeScreen = ({ suggestions, onStartChat }: WelcomeScreenProps) => {
   const [message, setMessage] = useState('');
   const suggestionIcons = [Zap, Brain, Target, Sparkles];
+
+  const handleSend = () => {
+    if (message.trim()) {
+      onStartChat(message.trim());
+      setMessage('');
+    }
+  };
 
   return (
     <div className="flex-1 flex flex-col h-full">
@@ -26,7 +32,6 @@ const WelcomeScreen = ({ suggestions, onSuggestionClick, onUserMessage }: Welcom
         <div className="max-w-4xl mx-auto w-full space-y-12">
           {/* Hero Section */}
           <div className="text-center space-y-6">
-
             <div className="space-y-3">
               <h2 className="text-3xl font-bold text-gray-900 tracking-tight">How can I help you today?</h2>
               <p className="text-gray-600 text-lg max-w-2xl mx-auto">
@@ -44,11 +49,10 @@ const WelcomeScreen = ({ suggestions, onSuggestionClick, onUserMessage }: Welcom
                 return (
                   <button
                     key={suggestion.id}
-                    onClick={() => onSuggestionClick(suggestion)}
+                    onClick={() => onStartChat(suggestion.text)}
                     className="group p-4 bg-white/90 backdrop-blur-sm border border-gray-200/60 hover:border-[#1677FF] rounded-xl text-left text-gray-700 hover:text-gray-900 transition-all duration-200 hover:shadow-md hover:bg-white/95 hover:-translate-y-0.5"
                   >
                     <div className="flex items-center gap-4">
-
                       <div className="flex-1">
                         <span className="font-medium text-gray-900 group-hover:text-[#1677FF] transition-colors duration-200">
                           {suggestion.text}
@@ -66,26 +70,10 @@ const WelcomeScreen = ({ suggestions, onSuggestionClick, onUserMessage }: Welcom
       {/* Fixed Footer with ChatInput */}
       <footer className="border-t border-gray-200/60 bg-white/80 backdrop-blur-sm">
         <ChatInput
-          message={message}
-          onMessageChange={e => setMessage(e.target.value)}
-          onSendMessage={() => {
-            if (message.trim()) {
-              onUserMessage?.(message);
-              setMessage('');
-            }
-          }}
-          onKeyDown={e => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              if (message.trim()) {
-                onUserMessage?.(message);
-                setMessage('');
-              }
-            }
-          }}
-          showMentions={false}
-          filteredMentions={[]}
-          onMentionClick={() => { }}
+          value={message}
+          onChange={setMessage}
+          onSend={handleSend}
+          loading={false}
         />
       </footer>
     </div>

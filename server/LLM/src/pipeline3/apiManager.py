@@ -15,15 +15,19 @@ class ApiManager:
             if "_" in key and key.endswith(tuple("1234567890")):
                 parts = key.split('_')
                 if len(parts) >= 5:
-                    prefix = '_'.join(parts[:-3])
-                    limit = int(parts[-3])
-                    period = int(parts[-2])
-                    
-                    if prefix not in self.api_keys:
-                        self.api_keys[prefix] = []
-                        self.api_usage[prefix] = {}
-                    self.api_keys[prefix].append((value, limit, period))
-                    self.api_usage[prefix][value] = {'count': 0, 'expiry': None, 'limit': limit, 'period': period}
+                    try:
+                        prefix = '_'.join(parts[:-3])
+                        limit = int(parts[-3])
+                        period = int(parts[-2])
+                        
+                        if prefix not in self.api_keys:
+                            self.api_keys[prefix] = []
+                            self.api_usage[prefix] = {}
+                        self.api_keys[prefix].append((value, limit, period))
+                        self.api_usage[prefix][value] = {'count': 0, 'expiry': None, 'limit': limit, 'period': period}
+                    except ValueError:
+                        # Skip environment variables that don't match our expected format
+                        continue
 
     def _reset_key(self, service, key):
         self.api_usage[service][key] = {'count': 0, 'expiry': None, 'limit': self.api_usage[service][key]['limit'], 'period': self.api_usage[service][key]['period']}
