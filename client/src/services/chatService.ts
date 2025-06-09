@@ -1,11 +1,7 @@
 import axios from 'axios';
 
-const isDevelopment = process.env.NODE_ENV === 'development';
-const CHAT_BASE_URL = isDevelopment ? 'http://localhost:5000' : 'https://linker-2.onrender.com/';
-const QUERY_BASE_URL = isDevelopment ? 'http://localhost:8000' : 'https://backend-app-6uva.onrender.com/';
-
-const API_BASE_URL = `${CHAT_BASE_URL}/api/chat`;
-const QUERY_API_URL = `${QUERY_BASE_URL}/api/v1/query`;
+const API_BASE_URL = 'http://localhost:5000/api/chat';
+const QUERY_API_URL = 'http://localhost:8000/api/v1/query';
 
 export interface Message {
   id: string;
