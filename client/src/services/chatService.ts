@@ -144,42 +144,41 @@ class ChatService {
   async createThread(title: string, user_id: string = 'user1'): Promise<ChatThread> {
     // Use the user's query or a default
     const threadTitle = title && title.trim() ? title.trim() : 'New Chat';
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     return {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      id: uniqueId,
       title: threadTitle,
       lastMessage: '',
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       messages: [],
-      ticker: threadTitle,
+      ticker: uniqueId,
       user_id
     };
   }
 
   async sendMessage(
-    threadId: string,
+    threadId: string, 
     message: string,
     history: HistoryItem[] = [],
-    ticker: string = 'AAPL',
     user_id: string = 'user1',
     mentioned_companies: string[] = []
   ): Promise<string | null> {
     try {
       console.log('Sending message:', { threadId, message });
       const response = await axios.post(`${API_BASE_URL}/query`, {
-        ticker,
+        ticker: threadId, 
         user_id,
         history,
         query: message,
         mentioned_companies,
       });
 
-      // Save the chat to history
       await axios.post(`${API_BASE_URL}/save_chat`, {
-        ticker,
+        ticker: threadId, 
         user_id,
         query: message,
         result: response.data.result,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       if (response.data && response.data.result) {
