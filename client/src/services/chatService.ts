@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { suggestions } from '../data/chatData';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL + '/api/v1' || 'http://localhost:8000/api/v1';
+//const API_BASE_URL = process.env.REACT_APP_API_BASE_URL + '/api/v1' || 'http://localhost:8000/api/v1';
+const API_BASE_URL =  'https://linker-2.onrender.com/api/v1';
 
 export interface Message {
   id: string;
